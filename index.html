@@ -1,283 +1,2144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!--
+    ============================================================
+    JADESOLA SANUSI — PORTFOLIO
+    ============================================================
+    STRUCTURE OVERVIEW
+    ------------------
+    1. <head>         — Fonts, meta, all embedded CSS
+    2. <nav>          — Fixed top bar: name + 3 pill tabs
+    3. #ux            — Section 1: UX Design (light, minimal)
+       - .ux-hero
+       - .ux-work-grid (7 project cards)
+       - .ux-about
+    4. #hmu           — Section 2: Hair & Makeup (black, editorial)
+       - .hmu-hero
+       - .hmu-credits (masonry image grid)
+       - .hmu-statement
+    5. #id            — Section 3: Industrial Design (warm off-white)
+       - .id-hero
+       - .id-grid (degree project cards)
+    6. <script>       — Tab switching logic + smooth transitions
+
+    EDITING NOTES
+    -------------
+    - Images: replace <div class="img-placeholder"> blocks with <img> tags
+    - Case study pages: each .project-card has a data-id attribute — expand
+      the openCaseStudy() function or link to separate HTML files
+    - Fonts loaded via Google Fonts CDN (requires internet)
+    - To deploy: push this file + any assets to your GitHub Pages repo
+    ============================================================
+  -->
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jadesola Sanusi — Product Designer</title>
+  <title>Jadesola Sanusi</title>
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Barlow+Condensed:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
 
-    :root {
-      --pink: #FF2D6B;
-      --white: #FFFFFF;
-      --off-white: rgba(255,255,255,0.45);
-      --black: #121212;
+  <style>
+    /* ============================================================
+       RESET & TOKENS
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    html, body {
-      height: 100%;
-      background: var(--black);
-      color: var(--white);
-      font-family: 'Inter', sans-serif;
-      font-weight: 300;
-      -webkit-font-smoothing: antialiased;
+    :root {
+      /* UX palette */
+      --ux-bg: #f7f7f7;
+      --ux-surface: #ffffff;
+      --ux-ink: #1a1a1a;
+      --ux-muted: #6b6b6b;
+      --ux-border: #e4e4e4;
+      --ux-tag-bg: #efefef;
+
+      /* H&MU palette */
+      --hmu-bg: #000000;
+      --hmu-ink: #ffffff;
+      --hmu-pink: #ff4fa3;
+      --hmu-teal: #00d4cc;
+      --hmu-muted: #888888;
+
+      /* ID palette */
+      --id-bg: #fafaf8;
+      --id-ink: #2a2520;
+      --id-muted: #7a7068;
+      --id-accent: #c8a882;
+      --id-border: #e5ddd4;
+
+      /* Shared */
+      --nav-h: 64px;
+      --radius-pill: 100px;
+      --radius-card: 8px;
+      --transition: 0.3s ease;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
-      display: grid;
-      grid-template-rows: 1fr auto;
-      min-height: 100vh;
-      padding: 48px;
-    }
-
-    main {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding-bottom: 64px;
-    }
-
-    .eyebrow {
-      font-size: 11px;
-      font-weight: 400;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--pink);
-      margin-bottom: 24px;
-    }
-
-    h1 {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
-      font-weight: 300;
-      font-size: clamp(56px, 8vw, 112px);
-      line-height: 0.92;
-      letter-spacing: -0.02em;
-      margin-bottom: 32px;
-    }
-
-    h1 em {
-      font-style: normal;
-      color: var(--off-white);
-    }
-
-    .descriptor {
-      font-size: 13px;
-      font-weight: 300;
-      letter-spacing: 0.06em;
-      color: var(--off-white);
+      font-size: 16px;
       line-height: 1.6;
-      max-width: 560px;
-      margin-bottom: 48px;
+      -webkit-font-smoothing: antialiased;
+      background: var(--ux-bg);
     }
 
-    .password-form {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      max-width: 320px;
-    }
-
-    .password-label {
-      font-size: 11px;
-      font-weight: 400;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--off-white);
-    }
-
-    .password-row {
-      display: flex;
-      gap: 0;
-    }
-
-    input[type="password"] {
-      flex: 1;
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.2);
-      border-right: none;
-      color: var(--white);
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      font-weight: 300;
-      letter-spacing: 0.06em;
-      padding: 13px 16px;
-      outline: none;
-      transition: border-color 0.2s ease;
-    }
-
-    input[type="password"]:focus {
-      border-color: rgba(255,255,255,0.5);
-    }
-
-    input[type="password"]::placeholder {
-      color: rgba(255,255,255,0.2);
-    }
-
-    button {
-      background: var(--white);
-      border: none;
-      color: var(--black);
-      font-family: 'Inter', sans-serif;
-      font-size: 11px;
-      font-weight: 400;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      padding: 13px 20px;
-      cursor: pointer;
-      transition: background 0.2s ease, color 0.2s ease;
-      white-space: nowrap;
-    }
-
-    button:hover {
-      background: var(--pink);
-      color: var(--white);
-    }
-
-    .error {
-      font-size: 11px;
-      font-weight: 300;
-      letter-spacing: 0.06em;
-      color: var(--pink);
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      height: 14px;
-    }
-
-    .error.visible {
-      opacity: 1;
-    }
-
-    .contact-line {
-      margin-top: 20px;
-      font-size: 11px;
-      font-weight: 300;
-      letter-spacing: 0.06em;
-      color: var(--off-white);
-    }
-
-    .contact-line a {
-      color: var(--off-white);
+    a {
+      color: inherit;
       text-decoration: none;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-      padding-bottom: 1px;
-      transition: color 0.2s ease, border-color 0.2s ease;
     }
 
-    .contact-line a:hover {
-      color: var(--white);
-      border-color: var(--white);
+    img {
+      display: block;
+      max-width: 100%;
     }
 
-    footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      padding-top: 24px;
-    }
-
-    .footer-left {
-      font-size: 11px;
-      font-weight: 300;
-      letter-spacing: 0.06em;
-      color: var(--off-white);
-      line-height: 1.8;
-    }
-
-    .footer-right {
-      font-size: 11px;
-      font-weight: 300;
-      letter-spacing: 0.06em;
-      color: var(--off-white);
-      text-align: right;
-      line-height: 1.8;
-    }
-
-    .footer-right a {
-      color: var(--off-white);
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
-
-    .footer-right a:hover { color: var(--pink); }
-
-    .accent-bar {
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+    nav {
       position: fixed;
       top: 0;
       left: 0;
-      width: 3px;
-      height: 100vh;
-      background: var(--pink);
+      right: 0;
+      z-index: 100;
+      height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      transition: background var(--transition), border-color var(--transition);
     }
 
-    @media (max-width: 600px) {
-      body { padding: 32px 24px; }
-      h1 { font-size: clamp(48px, 12vw, 72px); }
-      footer { flex-direction: column; gap: 16px; align-items: flex-start; }
-      .footer-right { text-align: left; }
+    nav.nav--ux {
+      background: rgba(247, 247, 247, 0.92);
+      border-color: rgba(0,0,0,0.08);
+    }
+
+    nav.nav--hmu {
+      background: rgba(0, 0, 0, 0.92);
+      border-color: rgba(255,255,255,0.08);
+    }
+
+    nav.nav--id {
+      background: rgba(250, 250, 248, 0.92);
+      border-color: rgba(0,0,0,0.08);
+    }
+
+    .nav-name {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 15px;
+      letter-spacing: 0.01em;
+      transition: color var(--transition);
+    }
+
+    nav.nav--hmu .nav-name {
+      color: #ffffff;
+    }
+
+    nav.nav--ux .nav-name,
+    nav.nav--id .nav-name {
+      color: #1a1a1a;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .nav-tabs button {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: 7px 18px;
+      border-radius: var(--radius-pill);
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      background: transparent;
+      transition: all 0.2s ease;
+    }
+
+    /* UX tab states */
+    nav.nav--ux .nav-tabs button {
+      color: var(--ux-muted);
+      border-color: transparent;
+    }
+
+    nav.nav--ux .nav-tabs button:hover {
+      color: var(--ux-ink);
+      background: rgba(26,26,26,0.06);
+    }
+
+    nav.nav--ux .nav-tabs button.active {
+      color: #ffffff;
+      background: var(--ux-ink);
+      border-color: var(--ux-ink);
+    }
+
+    /* H&MU tab states */
+    nav.nav--hmu .nav-tabs button {
+      color: #888;
+      border-color: transparent;
+    }
+
+    nav.nav--hmu .nav-tabs button:hover {
+      color: #ffffff;
+      background: rgba(255,255,255,0.08);
+    }
+
+    nav.nav--hmu .nav-tabs button.active {
+      color: #000;
+      background: var(--hmu-pink);
+      border-color: var(--hmu-pink);
+    }
+
+    /* ID tab states */
+    nav.nav--id .nav-tabs button {
+      color: var(--id-muted);
+      border-color: transparent;
+    }
+
+    nav.nav--id .nav-tabs button:hover {
+      color: var(--id-ink);
+      background: rgba(42,37,32,0.06);
+    }
+
+    nav.nav--id .nav-tabs button.active {
+      color: #ffffff;
+      background: var(--id-ink);
+      border-color: var(--id-ink);
+    }
+
+    /* ============================================================
+       SECTION SYSTEM
+    ============================================================ */
+    .section {
+      display: none;
+      opacity: 0;
+      min-height: 100vh;
+      padding-top: var(--nav-h);
+      transition: opacity 0.35s ease;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .section.visible {
+      opacity: 1;
+    }
+
+    /* ============================================================
+       SHARED UTILITIES
+    ============================================================ */
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    .img-placeholder {
+      background: #e0e0e0;
+      border-radius: var(--radius-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #999;
+    }
+
+    /* ============================================================
+       SECTION 1 — UX DESIGN
+    ============================================================ */
+    #ux {
+      background: var(--ux-bg);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--ux-ink);
+    }
+
+    /* UX Hero */
+    .ux-hero {
+      padding: 88px 0 72px;
+      border-bottom: 1px solid var(--ux-border);
+    }
+
+    .ux-hero__label {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ux-muted);
+      margin-bottom: 24px;
+    }
+
+    .ux-hero__name {
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--ux-ink);
+      margin-bottom: 16px;
+    }
+
+    .ux-hero__name em {
+      font-style: italic;
+      font-weight: 300;
+    }
+
+    .ux-hero__role {
+      font-size: clamp(18px, 2.5vw, 22px);
+      font-weight: 400;
+      color: var(--ux-muted);
+      margin-bottom: 40px;
+      max-width: 560px;
+      line-height: 1.5;
+    }
+
+    .ux-hero__stats {
+      display: flex;
+      gap: 48px;
+    }
+
+    .ux-stat__num {
+      font-size: 32px;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      color: var(--ux-ink);
+      display: block;
+    }
+
+    .ux-stat__label {
+      font-size: 13px;
+      color: var(--ux-muted);
+    }
+
+    /* UX Work Grid */
+    .ux-work {
+      padding: 72px 0;
+    }
+
+    .ux-work__header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 40px;
+    }
+
+    .ux-work__title {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ux-muted);
+    }
+
+    .ux-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2px;
+    }
+
+    .project-card {
+      background: var(--ux-surface);
+      padding: 32px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      border: 1px solid var(--ux-border);
+      margin: -1px 0 0 -1px;
+    }
+
+    .project-card:hover {
+      background: #f0f0f0;
+      z-index: 1;
+    }
+
+    .project-card__num {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: var(--ux-muted);
+      margin-bottom: 20px;
+    }
+
+    .project-card__title {
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      color: var(--ux-ink);
+      margin-bottom: 8px;
+      line-height: 1.25;
+    }
+
+    .project-card__codename {
+      font-size: 12px;
+      color: var(--ux-muted);
+      margin-bottom: 14px;
+      font-style: italic;
+    }
+
+    .project-card__desc {
+      font-size: 14px;
+      color: var(--ux-muted);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .project-card__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: var(--ux-tag-bg);
+      color: var(--ux-muted);
+    }
+
+    .project-card__link {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ux-ink);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.01em;
+    }
+
+    .project-card__link::after {
+      content: '→';
+      transition: transform 0.2s ease;
+    }
+
+    .project-card:hover .project-card__link::after {
+      transform: translateX(4px);
+    }
+
+    /* Password gate */
+    .pw-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: var(--ux-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .pw-gate.visible { opacity: 1; }
+
+    .pw-gate__inner {
+      width: 100%;
+      max-width: 380px;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .pw-gate__label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ux-muted);
+      margin-bottom: 32px;
+    }
+
+    .pw-gate__title {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 28px;
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      color: var(--ux-ink);
+      margin-bottom: 8px;
+    }
+
+    .pw-gate__sub {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--ux-muted);
+      margin-bottom: 40px;
+    }
+
+    .pw-gate__form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .pw-gate__input {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--ux-ink);
+      background: var(--ux-surface);
+      border: 1.5px solid var(--ux-border);
+      border-radius: 6px;
+      padding: 14px 18px;
+      width: 100%;
+      outline: none;
+      text-align: center;
+      letter-spacing: 0.04em;
+      transition: border-color 0.2s ease;
+    }
+
+    .pw-gate__input:focus {
+      border-color: var(--ux-ink);
+    }
+
+    .pw-gate__input.error {
+      border-color: #e05252;
+      animation: shake 0.3s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    .pw-gate__btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: #ffffff;
+      background: var(--ux-ink);
+      border: none;
+      border-radius: 6px;
+      padding: 14px 18px;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .pw-gate__btn:hover { opacity: 0.75; }
+
+    .pw-gate__error {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: #e05252;
+      height: 16px;
+      transition: opacity 0.2s;
+    }
+
+    /* UX Case Study Modal / Overlay */
+    .case-study-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: #f7f7f7;
+      overflow-y: auto;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .case-study-overlay.open {
+      display: block;
+    }
+
+    .case-study-overlay.visible {
+      opacity: 1;
+    }
+
+    .case-study-nav {
+      position: sticky;
+      top: 0;
+      background: rgba(247,247,247,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--ux-border);
+      padding: 0 40px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+    }
+
+    .case-study-back {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ux-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0;
+      transition: color 0.2s;
+    }
+
+    .case-study-back:hover { color: var(--ux-ink); }
+    .case-study-back::before { content: '←'; }
+
+    .case-study-body {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 64px 40px 120px;
+    }
+
+    .cs-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ux-muted);
+      margin-bottom: 16px;
+    }
+
+    .cs-title {
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      color: var(--ux-ink);
+      margin-bottom: 12px;
+    }
+
+    .cs-subtitle {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--ux-muted);
+      margin-bottom: 48px;
+      line-height: 1.5;
+    }
+
+    .cs-figma-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      color: #ffffff;
+      background: var(--ux-ink);
+      border-radius: 100px;
+      padding: 11px 22px;
+      margin-bottom: 48px;
+      transition: opacity 0.2s ease;
+    }
+
+    .cs-figma-btn:hover { opacity: 0.78; }
+
+    .cs-figma-btn__arrow {
+      font-size: 15px;
+      transition: transform 0.2s ease;
+    }
+
+    .cs-figma-btn:hover .cs-figma-btn__arrow {
+      transform: translate(2px, -2px);
+    }
+
+    .cs-section {
+      margin-bottom: 56px;
+    }
+
+    .cs-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ux-muted);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--ux-border);
+    }
+
+    .cs-section p {
+      font-size: 16px;
+      line-height: 1.75;
+      color: #3a3a3a;
+      margin-bottom: 16px;
+    }
+
+    .cs-img-placeholder {
+      background: #e8e8e8;
+      border-radius: var(--radius-card);
+      height: 360px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin: 24px 0;
+    }
+
+    .cs-img-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 24px 0;
+    }
+
+    .cs-img-row .cs-img-placeholder {
+      height: 240px;
+    }
+
+    /* Real screen gallery */
+    .cs-fig {
+      margin: 24px 0 32px;
+      position: relative;
+    }
+
+    .cs-shot {
+      width: 100%;
+      display: block;
+      border-radius: var(--radius-card);
+      border: 1px solid var(--ux-border);
+      background: var(--ux-surface);
+    }
+
+    .cs-fig figcaption {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--ux-muted);
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+
+    /* Before / after pair */
+    .cs-ba {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .cs-ba .cs-fig { margin: 0; }
+
+    .cs-fig__tag {
+      display: inline-block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 10px;
+    }
+
+    .cs-fig__tag--before {
+      background: #f0e4e4;
+      color: #9a5b5b;
+    }
+
+    .cs-fig__tag--after {
+      background: #e4efe6;
+      color: #4a7a55;
+    }
+
+    /* Placeholder shots (before image / recording not supplied yet) */
+    .cs-shot--ph {
+      aspect-ratio: 16 / 9;
+      border: 1.5px dashed var(--ux-border);
+      background: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #999;
+      line-height: 1.6;
+      padding: 16px;
+    }
+
+    .cs-shot--ph span {
+      font-weight: 400;
+      font-size: 12px;
+      color: #b0b0b0;
+    }
+
+    .cs-shot--rec {
+      aspect-ratio: 16 / 9;
+      background: #ececec;
+    }
+
+    .cs-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      padding: 32px;
+      background: var(--ux-surface);
+      border: 1px solid var(--ux-border);
+      border-radius: var(--radius-card);
+      margin-bottom: 48px;
+    }
+
+    .cs-meta-item__label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ux-muted);
+      margin-bottom: 6px;
+    }
+
+    .cs-meta-item__value {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ux-ink);
+    }
+
+    /* UX About */
+    .ux-about {
+      padding: 64px 0 96px;
+      border-top: 1px solid var(--ux-border);
+    }
+
+    .ux-about__inner {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 64px;
+      align-items: start;
+    }
+
+    .ux-about__label {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ux-muted);
+      padding-top: 4px;
+    }
+
+    .ux-about__text {
+      font-size: 17px;
+      line-height: 1.75;
+      color: #3a3a3a;
+      font-weight: 300;
+    }
+
+    .ux-about__link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 24px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ux-ink);
+      border-bottom: 1px solid var(--ux-ink);
+      padding-bottom: 2px;
+      transition: opacity 0.2s;
+    }
+
+    .ux-about__link:hover { opacity: 0.6; }
+
+    /* ============================================================
+       SECTION 2 — HAIR & MAKEUP
+    ============================================================ */
+    #hmu {
+      background: var(--hmu-bg);
+      color: var(--hmu-ink);
+    }
+
+    /* H&MU Hero */
+    .hmu-hero {
+      padding: 96px 0 80px;
+    }
+
+    .hmu-hero__eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--hmu-pink);
+      margin-bottom: 28px;
+    }
+
+    .hmu-hero__title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(48px, 8vw, 104px);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .hmu-hero__title em {
+      font-style: italic;
+      color: var(--hmu-pink);
+    }
+
+    .hmu-hero__subtitle {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(20px, 3vw, 28px);
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--hmu-muted);
+      margin-top: 24px;
+      margin-bottom: 48px;
+    }
+
+    .hmu-hero__trading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hmu-hero__trading-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--hmu-muted);
+    }
+
+    .hmu-hero__trading-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-style: italic;
+      color: var(--hmu-teal);
+      letter-spacing: 0.02em;
+    }
+
+    /* H&MU Floating badges */
+    .hmu-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 48px 0 0;
+    }
+
+    .hmu-badge {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 7px 16px;
+      border-radius: var(--radius-pill);
+      border: 1.5px solid;
+    }
+
+    .hmu-badge--pink {
+      color: var(--hmu-pink);
+      border-color: var(--hmu-pink);
+    }
+
+    .hmu-badge--teal {
+      color: var(--hmu-teal);
+      border-color: var(--hmu-teal);
+    }
+
+    .hmu-badge--white {
+      color: rgba(255,255,255,0.5);
+      border-color: rgba(255,255,255,0.15);
+    }
+
+    /* H&MU Credits Grid */
+    .hmu-credits {
+      padding: 80px 0;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .hmu-credits__header {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--hmu-muted);
+      margin-bottom: 40px;
+    }
+
+    /* Masonry-style editorial grid */
+    .hmu-grid {
+      columns: 3;
+      column-gap: 16px;
+    }
+
+    .credit-card {
+      break-inside: avoid;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 4px;
+    }
+
+    .credit-card .img-placeholder {
+      border-radius: 4px;
+      background: #111;
+      color: #333;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    /* Alternate heights for editorial feel */
+    .credit-card:nth-child(1) .img-placeholder { height: 420px; }
+    .credit-card:nth-child(2) .img-placeholder { height: 280px; }
+    .credit-card:nth-child(3) .img-placeholder { height: 360px; }
+    .credit-card:nth-child(4) .img-placeholder { height: 320px; }
+    .credit-card:nth-child(5) .img-placeholder { height: 460px; }
+    .credit-card:nth-child(6) .img-placeholder { height: 300px; }
+
+    .credit-card__info {
+      padding: 14px 0 6px;
+    }
+
+    .credit-card__client {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 400;
+      color: #ffffff;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .credit-card__meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .credit-card__category {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+    }
+
+    .cat--pink { background: var(--hmu-pink); color: #000; }
+    .cat--teal { background: var(--hmu-teal); color: #000; }
+    .cat--white { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); }
+
+    /* H&MU Statement */
+    .hmu-statement {
+      padding: 80px 0 96px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .hmu-statement__inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: end;
+    }
+
+    .hmu-statement__text {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(22px, 3vw, 30px);
+      font-weight: 400;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .hmu-statement__text em {
+      font-style: italic;
+      color: var(--hmu-pink);
+    }
+
+    .hmu-contact__label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--hmu-muted);
+      margin-bottom: 20px;
+    }
+
+    .hmu-contact__links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hmu-contact__link {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: color 0.2s;
+    }
+
+    .hmu-contact__link:hover { color: var(--hmu-pink); }
+
+    .hmu-contact__link-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    /* ============================================================
+       SECTION 3 — INDUSTRIAL DESIGN
+    ============================================================ */
+    #id {
+      background: var(--id-bg);
+      color: var(--id-ink);
+    }
+
+    /* ID Hero */
+    .id-hero {
+      padding: 88px 0 72px;
+      border-bottom: 1px solid var(--id-border);
+    }
+
+    .id-hero__label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--id-accent);
+      margin-bottom: 24px;
+    }
+
+    .id-hero__title {
+      font-family: 'Lora', serif;
+      font-size: clamp(36px, 5.5vw, 68px);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      color: var(--id-ink);
+      margin-bottom: 16px;
+    }
+
+    .id-hero__title em {
+      font-style: italic;
+      color: var(--id-accent);
+    }
+
+    .id-hero__degree {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 17px;
+      color: var(--id-muted);
+      font-weight: 300;
+      margin-bottom: 12px;
+    }
+
+    .id-hero__note {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--id-muted);
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--id-border);
+      max-width: 540px;
+    }
+
+    /* ID Grid */
+    .id-work {
+      padding: 72px 0 96px;
+    }
+
+    .id-work__header {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--id-muted);
+      margin-bottom: 40px;
+    }
+
+    .id-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 32px;
+    }
+
+    .id-card {
+      background: transparent;
+    }
+
+    .id-card .img-placeholder {
+      height: 280px;
+      background: var(--id-border);
+      border-radius: 6px;
+      color: #c0b8af;
+      margin-bottom: 20px;
+    }
+
+    .id-card__year {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--id-accent);
+      margin-bottom: 8px;
+    }
+
+    .id-card__title {
+      font-family: 'Lora', serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--id-ink);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .id-card__desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--id-muted);
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 768px) {
+      nav {
+        padding: 0 20px;
+      }
+
+      .nav-name {
+        font-size: 13px;
+      }
+
+      .nav-tabs button {
+        font-size: 12px;
+        padding: 6px 12px;
+      }
+
+      .container {
+        padding: 0 20px;
+      }
+
+      .ux-hero {
+        padding: 56px 0 48px;
+      }
+
+      .ux-hero__stats {
+        gap: 28px;
+      }
+
+      .ux-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .project-card {
+        margin: 0;
+        border-width: 0 0 1px 0;
+        border-radius: 0;
+      }
+
+      .ux-about__inner {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+
+      .hmu-hero {
+        padding: 64px 0 48px;
+      }
+
+      .hmu-grid {
+        columns: 2;
+      }
+
+      .hmu-statement__inner {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+
+      .id-hero {
+        padding: 56px 0 48px;
+      }
+
+      .id-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .cs-meta-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .cs-img-row {
+        grid-template-columns: 1fr;
+      }
+
+      .case-study-body {
+        padding: 40px 20px 80px;
+      }
+
+      .case-study-nav {
+        padding: 0 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hmu-grid {
+        columns: 1;
+      }
+
+      .hmu-hero__title {
+        font-size: 52px;
+      }
+
+      .cs-meta-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
+
 <body>
 
-  <div class="accent-bar"></div>
+  <!-- ============================================================
+       NAVIGATION
+  ============================================================ -->
+  <nav id="main-nav" class="nav--ux" role="navigation" aria-label="Main navigation">
+    <span class="nav-name">Jadesola Sanusi</span>
+    <ul class="nav-tabs" role="tablist">
+      <li role="none">
+        <button role="tab" aria-selected="true"  aria-controls="ux"  data-section="ux"  class="active">UX Design</button>
+      </li>
+      <li role="none">
+        <button role="tab" aria-selected="false" aria-controls="hmu" data-section="hmu">Hair &amp; Makeup</button>
+      </li>
+      <li role="none">
+        <button role="tab" aria-selected="false" aria-controls="id"  data-section="id">Industrial Design</button>
+      </li>
+    </ul>
+  </nav>
 
-  <main>
-    <p class="eyebrow">Portfolio</p>
-    <h1>Jadesola<br /><em>Sanusi</em></h1>
-    <p class="descriptor">
-      Product designer specialising in complex, data-heavy product design. Three years at Goldman Sachs designing products entirely from scratch, with no existing tooling, workflows or design to build from.<br /><br />
-      Goldman Sachs · London · Open to remote
-    </p>
+  <!-- ============================================================
+       SECTION 1 — UX DESIGN
+  ============================================================ -->
+  <section id="ux" class="section active" role="tabpanel" aria-label="UX Design">
 
-    <div class="password-form">
-      <span class="password-label">Enter password to view</span>
-      <div class="password-row">
-        <input type="password" id="pw" placeholder="password" autocomplete="off" />
-        <button onclick="checkPassword()">Enter</button>
+    <!-- Hero -->
+    <div class="ux-hero">
+      <div class="container">
+        <p class="ux-hero__label">UX Design Analyst — Financial Services</p>
+        <h1 class="ux-hero__name">Designing <em>complex tools</em><br>for alternatives investment.</h1>
+        <p class="ux-hero__role">At a global investment bank — building the internal products that move capital, manage risk, and replace spreadsheets.</p>
+        <div class="ux-hero__stats">
+          <div class="ux-stat">
+            <span class="ux-stat__num">3</span>
+            <span class="ux-stat__label">Years in enterprise UX</span>
+          </div>
+          <div class="ux-stat">
+            <span class="ux-stat__num">7</span>
+            <span class="ux-stat__label">Greenfield projects</span>
+          </div>
+        </div>
       </div>
-      <div class="error" id="error">Incorrect password</div>
     </div>
 
-    <p class="contact-line">
-      No password? <a href="mailto:jadesanusi@icloud.com?subject=Portfolio access request">Request access</a>
-    </p>
-  </main>
+    <!-- Work grid -->
+    <div class="ux-work">
+      <div class="container">
+        <div class="ux-work__header">
+          <span class="ux-work__title">Selected Work</span>
+        </div>
+        <div class="ux-grid">
 
-  <footer>
-    <div class="footer-left">
-      Product Designer<br />
-      London, UK
-    </div>
-    <div class="footer-right">
-      <a href="https://linkedin.com/in/jadesanusi" target="_blank" rel="noopener">LinkedIn</a><br />
-      &copy; 2026 Jadesola Sanusi
-    </div>
-  </footer>
+          <!-- 01 — Cash Management -->
+          <div class="project-card" data-id="cashroll" onclick="openCaseStudy('cashroll')">
+            <p class="project-card__num">01</p>
+            <h2 class="project-card__title">Cash Management Tool</h2>
+            <p class="project-card__codename">Codename: CashRoll</p>
+            <p class="project-card__desc">A transaction data grid replacing manual Excel workflows for cash operations.</p>
+            <div class="project-card__tags">
+              <span class="tag">Enterprise</span>
+              <span class="tag">Greenfield</span>
+              <span class="tag">Data-heavy</span>
+            </div>
+            <span class="project-card__link">View case study</span>
+          </div>
 
+          <!-- 02 — Portfolio Valuation -->
+          <div class="project-card" data-id="vela" onclick="openCaseStudy('vela')">
+            <p class="project-card__num">02</p>
+            <h2 class="project-card__title">Portfolio Valuation Platform</h2>
+            <p class="project-card__codename">Codename: Vela</p>
+            <p class="project-card__desc">A valuation and marking tool for private equity portfolios with approval workflows.</p>
+            <div class="project-card__tags">
+              <span class="tag">Enterprise</span>
+              <span class="tag">Greenfield</span>
+              <span class="tag">Approvals</span>
+            </div>
+            <span class="project-card__link">View case study</span>
+          </div>
+
+          <!-- 03 — Deal Terms -->
+          <div class="project-card" data-id="deal-terms" onclick="openCaseStudy('deal-terms')">
+            <p class="project-card__num">03</p>
+            <h2 class="project-card__title">Deal Terms Capture</h2>
+            <p class="project-card__desc">A standalone platform for structuring capital stacks and capturing deal terms — carved out when the equity scope outgrew its original system.</p>
+            <div class="project-card__tags">
+              <span class="tag">Enterprise</span>
+              <span class="tag">Greenfield</span>
+              <span class="tag">Complex forms</span>
+            </div>
+            <span class="project-card__link">View case study</span>
+          </div>
+
+          <!-- 04 — Insurance Matching -->
+          <div class="project-card" data-id="insurance" onclick="openCaseStudy('insurance')">
+            <p class="project-card__num">04</p>
+            <h2 class="project-card__title">Insurance Matching Dashboard</h2>
+            <p class="project-card__desc">Replacing email chains and manual invoice tracking with a reconciliation dashboard and tagging flows.</p>
+            <div class="project-card__tags">
+              <span class="tag">Enterprise</span>
+              <span class="tag">Greenfield</span>
+              <span class="tag">Ops</span>
+            </div>
+            <span class="project-card__link">View case study</span>
+          </div>
+
+          <!-- 05 — Credit Risk -->
+          <div class="project-card" data-id="credit" onclick="openCaseStudy('credit')">
+            <p class="project-card__num">05</p>
+            <h2 class="project-card__title">Credit Risk Memo &amp; Agreement Setup</h2>
+            <p class="project-card__desc">A revamp of an unusable legacy platform for credit agreement setup, Orion integration, and audit trail.</p>
+            <div class="project-card__tags">
+              <span class="tag">Enterprise</span>
+              <span class="tag">Revamp</span>
+              <span class="tag">Legacy replacement</span>
+            </div>
+            <span class="project-card__link">View case study</span>
+          </div>
+
+          <!-- 06 — FX Risk -->
+          <div class="project-card" data-id="fx" onclick="openCaseStudy('fx')">
+            <p class="project-card__num">06</p>
+            <h2 class="project-card__title">FX Risk Management Tool</h2>
+            <p class="project-card__desc">FX exposure views across fund families, with pivot presets, hedging ratios, and cashflow tracking.</p>
+            <div class="project-card__tags">
+              <span class="tag">Enterprise</span>
+              <span class="tag">Greenfield</span>
+              <span class="tag">Risk</span>
+            </div>
+            <span class="project-card__link">View case study</span>
+          </div>
+
+          <!-- 07 — RedLine -->
+          <div class="project-card" data-id="redline" onclick="openCaseStudy('redline')">
+            <p class="project-card__num">07</p>
+            <h2 class="project-card__title">RedLine</h2>
+            <p class="project-card__codename">Freelance</p>
+            <p class="project-card__desc">A mobile-first app for artists and producers to create, collaborate on, and digitally sign music contracts.</p>
+            <div class="project-card__tags">
+              <span class="tag">Freelance</span>
+              <span class="tag">Mobile</span>
+              <span class="tag">Consumer</span>
+            </div>
+            <span class="project-card__link">View case study</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- About -->
+    <div class="ux-about">
+      <div class="container">
+        <div class="ux-about__inner">
+          <span class="ux-about__label">About</span>
+          <div>
+            <p class="ux-about__text">
+              Three years designing for alternatives investment at a global investment bank. Seven greenfield products — most replacing Excel, one replacing nothing at all. The work sits at the intersection of financial complexity and operational clarity: data-heavy tools built for people who know exactly what they need, even if they can't always articulate it. Industrial Design graduate (Loughborough, 2023). Independently working across enterprise fintech and consumer mobile.
+            </p>
+            <a href="#" class="ux-about__link">LinkedIn ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       PASSWORD GATE (UX section)
+  ============================================================ -->
+  <div id="pw-gate" class="pw-gate" role="dialog" aria-modal="true" aria-label="Password protected">
+    <div class="pw-gate__inner">
+      <p class="pw-gate__label">UX Design — Case Studies</p>
+      <h2 class="pw-gate__title">This section is private.</h2>
+      <p class="pw-gate__sub">Enter the password to view.</p>
+      <form class="pw-gate__form" onsubmit="checkPassword(event)">
+        <input id="pw-input" class="pw-gate__input" type="password" placeholder="password" autocomplete="off" />
+        <p class="pw-gate__error" id="pw-error" aria-live="polite"></p>
+        <button class="pw-gate__btn" type="submit">Enter</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       CASE STUDY OVERLAY (shared, populated by JS)
+  ============================================================ -->
+  <div id="case-study-overlay" class="case-study-overlay" role="dialog" aria-modal="true" aria-label="Case study">
+    <div class="case-study-nav">
+      <button class="case-study-back" onclick="closeCaseStudy()">All projects</button>
+    </div>
+    <div class="case-study-body" id="case-study-content">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SECTION 2 — HAIR & MAKEUP
+  ============================================================ -->
+  <section id="hmu" class="section" role="tabpanel" aria-label="Hair and Makeup">
+
+    <!-- Hero -->
+    <div class="hmu-hero">
+      <div class="container">
+        <p class="hmu-hero__eyebrow">Session Artist</p>
+        <h1 class="hmu-hero__title">Hair &amp;<br><em>Makeup.</em></h1>
+        <p class="hmu-hero__subtitle">Editorial &nbsp;·&nbsp; Runway &nbsp;·&nbsp; Commercial</p>
+        <div class="hmu-hero__trading">
+          <span class="hmu-hero__trading-label">Trading as</span>
+          <span class="hmu-hero__trading-name">Narcisssspace</span>
+        </div>
+        <div class="hmu-badges">
+          <span class="hmu-badge hmu-badge--pink">London Fashion Week ✦</span>
+          <span class="hmu-badge hmu-badge--teal">Africa Fashion Week ✦</span>
+          <span class="hmu-badge hmu-badge--white">Warner Music ✦</span>
+          <span class="hmu-badge hmu-badge--white">KFC Christmas ✦</span>
+          <span class="hmu-badge hmu-badge--pink">Sicky Magazine ✦</span>
+          <span class="hmu-badge hmu-badge--white">Karen Binns ✦</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Credits / work -->
+    <div class="hmu-credits">
+      <div class="container">
+        <p class="hmu-credits__header">Selected Credits</p>
+        <div class="hmu-grid">
+
+          <div class="credit-card">
+            <div class="img-placeholder">Insert editorial image here</div>
+            <div class="credit-card__info">
+              <p class="credit-card__client">Sicky Magazine</p>
+              <div class="credit-card__meta">
+                <span class="credit-card__category cat--pink">Editorial</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="credit-card">
+            <div class="img-placeholder">Insert editorial image here</div>
+            <div class="credit-card__info">
+              <p class="credit-card__client">KFC Christmas Commercial</p>
+              <div class="credit-card__meta">
+                <span class="credit-card__category cat--teal">Commercial</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="credit-card">
+            <div class="img-placeholder">Insert editorial image here</div>
+            <div class="credit-card__info">
+              <p class="credit-card__client">Warner Music</p>
+              <div class="credit-card__meta">
+                <span class="credit-card__category cat--pink">Music Video</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="credit-card">
+            <div class="img-placeholder">Insert editorial image here</div>
+            <div class="credit-card__info">
+              <p class="credit-card__client">London Fashion Week</p>
+              <div class="credit-card__meta">
+                <span class="credit-card__category cat--white">Runway</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="credit-card">
+            <div class="img-placeholder">Insert editorial image here</div>
+            <div class="credit-card__info">
+              <p class="credit-card__client">Africa Fashion Week</p>
+              <div class="credit-card__meta">
+                <span class="credit-card__category cat--white">Runway</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="credit-card">
+            <div class="img-placeholder">Insert editorial image here</div>
+            <div class="credit-card__info">
+              <p class="credit-card__client">Styled with Karen Binns</p>
+              <div class="credit-card__meta">
+                <span class="credit-card__category cat--teal">Collaboration</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Statement + contact -->
+    <div class="hmu-statement">
+      <div class="container">
+        <div class="hmu-statement__inner">
+          <p class="hmu-statement__text">
+            Based in London.<br>
+            Available for <em>editorial</em>,<br>
+            runway, and commercial<br>
+            bookings.
+          </p>
+          <div class="hmu-contact">
+            <p class="hmu-contact__label">Get in touch</p>
+            <div class="hmu-contact__links">
+              <a href="mailto:hello@narcisssspace.com" class="hmu-contact__link">
+                <span class="hmu-contact__link-icon">✉</span>
+                hello@narcisssspace.com
+              </a>
+              <a href="#" class="hmu-contact__link">
+                <span class="hmu-contact__link-icon">◎</span>
+                @narcisssspace
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       SECTION 3 — INDUSTRIAL DESIGN
+  ============================================================ -->
+  <section id="id" class="section" role="tabpanel" aria-label="Industrial Design">
+
+    <!-- Hero -->
+    <div class="id-hero">
+      <div class="container">
+        <p class="id-hero__label">Industrial Design</p>
+        <h1 class="id-hero__title">Loughborough<br><em>University</em>, 2023.</h1>
+        <p class="id-hero__degree">BA Industrial Design &amp; Technology &mdash; 2:1</p>
+        <p class="id-hero__note">Selected work from undergraduate study at Loughborough University, 2020–2023.</p>
+      </div>
+    </div>
+
+    <!-- Project grid -->
+    <div class="id-work">
+      <div class="container">
+        <p class="id-work__header">Degree Projects</p>
+        <div class="id-grid">
+
+          <div class="id-card">
+            <div class="img-placeholder">Insert project image here</div>
+            <p class="id-card__year">2023</p>
+            <h2 class="id-card__title">Project Title Placeholder</h2>
+            <p class="id-card__desc">One-line description of the project — material, method, or problem addressed.</p>
+          </div>
+
+          <div class="id-card">
+            <div class="img-placeholder">Insert project image here</div>
+            <p class="id-card__year">2022</p>
+            <h2 class="id-card__title">Project Title Placeholder</h2>
+            <p class="id-card__desc">One-line description of the project — material, method, or problem addressed.</p>
+          </div>
+
+          <div class="id-card">
+            <div class="img-placeholder">Insert project image here</div>
+            <p class="id-card__year">2022</p>
+            <h2 class="id-card__title">Project Title Placeholder</h2>
+            <p class="id-card__desc">One-line description of the project — material, method, or problem addressed.</p>
+          </div>
+
+          <div class="id-card">
+            <div class="img-placeholder">Insert project image here</div>
+            <p class="id-card__year">2021</p>
+            <h2 class="id-card__title">Project Title Placeholder</h2>
+            <p class="id-card__desc">One-line description of the project — material, method, or problem addressed.</p>
+          </div>
+
+          <div class="id-card">
+            <div class="img-placeholder">Insert project image here</div>
+            <p class="id-card__year">2021</p>
+            <h2 class="id-card__title">Project Title Placeholder</h2>
+            <p class="id-card__desc">One-line description of the project — material, method, or problem addressed.</p>
+          </div>
+
+          <div class="id-card">
+            <div class="img-placeholder">Insert project image here</div>
+            <p class="id-card__year">2020</p>
+            <h2 class="id-card__title">Project Title Placeholder</h2>
+            <p class="id-card__desc">One-line description of the project — material, method, or problem addressed.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       JAVASCRIPT — Tab switching + case study overlay
+  ============================================================ -->
   <script>
-    // When your portfolio is deployed, replace the URL below with your live portfolio URL
-    const PORTFOLIO_URL = 'https://jadesanusi.github.io/portfolio';
-    const PASSWORD = 'designgeek';
+    // ——— Case study data ———————————————————————————————————————
+    // Add or expand entries here. Each key matches the data-id on the card.
+    const CASE_STUDIES = {
+      cashroll: {
+        label: 'Cash Management Tool · Codename: CashRoll',
+        title: 'Cash Management Tool',
+        subtitle: 'A transaction data grid replacing manual Excel workflows for cash operations.',
+        figma: 'https://www.figma.com/design/TulzjRqLfMYvzUOeLhRc8Z/Portfolio-UX?node-id=122-615590',
+        meta: [
+          { label: 'Client',   value: 'A global investment bank' },
+          { label: 'Role',     value: 'Lead UX Designer' },
+          { label: 'Status',   value: 'Shipped' },
+          { label: 'Type',     value: 'Greenfield · Enterprise' },
+          { label: 'Before',   value: 'Excel spreadsheets' },
+          { label: 'Year',     value: '2023–2024' },
+        ],
+        overview: 'The cash operations team managed daily transaction reconciliation across fund families using a patchwork of Excel files. Volumes were growing, errors were compounding, and the manual process couldn\'t scale. CashRoll is a bespoke transaction data grid built to replace it — filterable, auditable, and built around how the desk actually works.',
+        problem: 'Multiple analysts maintaining separate Excel files with no single source of truth. Manual reconciliation introduced latency and error. No audit trail. No way to surface anomalies at scale. The process was working by habit, not design.',
+        approach: '[ Placeholder — describe your research approach, discovery findings, key design decisions, and iterations here. ]',
+        outcome: '[ Placeholder — describe what shipped, adoption metrics, and any measured impact here. ]',
+        beforeAfter: {
+          beforeLabel: 'Manual Excel reconciliation',
+          afterSrc: 'images/cashroll/01-default-view.png',
+          afterLabel: 'The CashRoll data grid',
+        },
+        gallery: [
+          { src: 'images/cashroll/01-default-view.png', caption: 'Default grid view — transaction data across fund families, with inline comments.' },
+          { src: 'images/cashroll/02-merge-confirmation.png', caption: 'Merge confirmation — reconciling duplicate transactions safely.' },
+          { src: 'images/cashroll/03-merge-history.png', caption: 'Merge history — a full audit trail of every reconciliation.' },
+          { src: 'images/cashroll/04-filtered-view.png', caption: 'Filtered view — narrowing the grid by fund family, date range, or transaction type.' },
+          { src: 'images/cashroll/05-edit-overlay.png', caption: 'Edit overlay — inline editing of transaction details without leaving the grid.' },
+        ],
+      },
+      vela: {
+        label: 'Portfolio Valuation Platform · Codename: Vela',
+        title: 'Portfolio Valuation Platform',
+        subtitle: 'A valuation and marking tool for private equity portfolios with approval workflows.',
+        figma: 'https://www.figma.com/design/TulzjRqLfMYvzUOeLhRc8Z/Portfolio-UX?node-id=122-615591',
+        meta: [
+          { label: 'Client',   value: 'A global investment bank' },
+          { label: 'Role',     value: 'Lead UX Designer' },
+          { label: 'Status',   value: 'Shipped' },
+          { label: 'Type',     value: 'Greenfield · Enterprise' },
+          { label: 'Before',   value: 'Excel spreadsheets' },
+          { label: 'Year',     value: '2023' },
+        ],
+        overview: 'Private equity valuations require quarterly marking of portfolio holdings — a process that involves multiple stakeholders, approval chains, and strict audit requirements. Vela is the platform built to own that workflow end-to-end.',
+        problem: 'Valuations were being managed in Excel, emailed between teams, and manually tracked for approvals. The process had no single audit trail, no structured sign-off mechanism, and no visibility across the portfolio at once.',
+        approach: '[ Placeholder — describe your research approach, discovery findings, key design decisions, and iterations here. ]',
+        outcome: '[ Placeholder — describe what shipped, adoption metrics, and any measured impact here. ]',
+        beforeAfter: {
+          beforeLabel: 'Excel spreadsheets emailed between teams',
+          afterSrc: 'images/vela/01-default-view.png',
+          afterLabel: 'Vela — portfolio marking view',
+        },
+        gallery: [
+          { src: 'images/vela/01-default-view.png', caption: 'Default marking view — portfolio holdings across fund families with live editing.' },
+          { src: 'images/vela/02-approvals-view.png', caption: 'Approvals view — structured sign-off chain with security-level breakdown.' },
+        ],
+      },
+      'deal-terms': {
+        label: 'Deal Terms Capture',
+        title: 'Deal Terms Capture',
+        subtitle: 'A standalone platform for structuring capital stacks and capturing deal terms.',
+        figma: 'https://www.figma.com/design/TulzjRqLfMYvzUOeLhRc8Z/Portfolio-UX?node-id=117-615589',
+        meta: [
+          { label: 'Client',   value: 'A global investment bank' },
+          { label: 'Role',     value: 'Lead UX Designer' },
+          { label: 'Status',   value: 'Shipped' },
+          { label: 'Type',     value: 'Greenfield · Enterprise · Complex forms' },
+          { label: 'Before',   value: 'No prior system' },
+          { label: 'Year',     value: '2024' },
+        ],
+        overview: 'Deal Terms Capture was carved out from the Vela equity scope when it became clear that the complexity of structuring capital stacks warranted its own standalone tool. It handles the capture of layered deal economics — equity, debt, preferred returns — and feeds downstream valuation and reporting systems.',
+        problem: 'There was no system. Deal terms were captured inconsistently across notes, emails, and ad-hoc spreadsheets. Downstream teams working in Vela had no reliable structured data to work from.',
+        approach: '[ Placeholder — describe your research approach, discovery findings, key design decisions, and iterations here. ]',
+        outcome: '[ Placeholder — describe what shipped, adoption metrics, and any measured impact here. ]',
+        beforeAfter: {
+          beforeLabel: 'No prior system — deal terms captured in notes and emails',
+          afterSrc: 'images/deal-terms/01-landing.png',
+          afterLabel: 'Deal Terms Capture — landing view',
+        },
+        gallery: [
+          { src: 'images/deal-terms/01-landing.png', caption: 'Landing page — deal inventory with fund and status filters.' },
+          { src: 'images/deal-terms/02-investment-view.png', caption: 'Investment view — read-only capital stack with layered economics.' },
+          { src: 'images/deal-terms/03-edit-view.png', caption: 'Edit mode — adding a new tranche row to a live deal.' },
+        ],
+      },
+      insurance: {
+        label: 'Insurance Matching Dashboard',
+        title: 'Insurance Matching Dashboard',
+        subtitle: 'Replacing email chains and manual invoice tracking with a reconciliation dashboard.',
+        figma: 'https://www.figma.com/design/TulzjRqLfMYvzUOeLhRc8Z/Portfolio-UX?node-id=71-752004',
+        meta: [
+          { label: 'Client',   value: 'A global investment bank' },
+          { label: 'Role',     value: 'Lead UX Designer' },
+          { label: 'Status',   value: 'Shipped' },
+          { label: 'Type',     value: 'Greenfield · Enterprise · Ops' },
+          { label: 'Before',   value: 'Email + manual invoice tracking' },
+          { label: 'Year',     value: '2024' },
+        ],
+        overview: 'The insurance operations team coordinated policy matching and invoice reconciliation via email, with no shared system of record. Queries were untracked. Exceptions had no formal tagging or resolution workflow. This dashboard replaced that process.',
+        problem: 'Email chains as the primary coordination mechanism for insurance reconciliation meant no searchability, no status visibility, and no way to measure resolution time. Exception handling was entirely informal.',
+        approach: '[ Placeholder — describe your research approach, discovery findings, key design decisions, and iterations here. ]',
+        outcome: '[ Placeholder — describe what shipped, adoption metrics, and any measured impact here. ]',
+        beforeAfter: {
+          beforeLabel: 'Email chains with no system of record',
+          afterSrc: 'images/insurance/01-validated-amounts.png',
+          afterLabel: 'Insurance Matching Dashboard — reconciliation view',
+        },
+        gallery: [
+          { src: 'images/insurance/01-validated-amounts.png', caption: 'Validated amounts — surplus state with two matched invoices flagged.' },
+          { src: 'images/insurance/02-select-invoice.png', caption: 'Invoice selection — choosing the matching invoice from a dropdown during reconciliation.' },
+        ],
+      },
+      credit: {
+        label: 'Credit Risk Memo & Agreement Setup',
+        title: 'Credit Risk Memo & Agreement Setup',
+        subtitle: 'A revamp of an unusable legacy platform for credit agreement setup and audit trail.',
+        figma: 'https://www.figma.com/design/24ceRWhy229VxAzP5XVdu6/Untitled?node-id=1-51926',
+        meta: [
+          { label: 'Client',   value: 'A global investment bank' },
+          { label: 'Role',     value: 'Lead UX Designer' },
+          { label: 'Status',   value: 'In progress' },
+          { label: 'Type',     value: 'Enterprise · Revamp · Legacy replacement' },
+          { label: 'Before',   value: 'Legacy platform with poor UX' },
+          { label: 'Year',     value: '2024–2025' },
+        ],
+        overview: 'The credit risk team was working with a legacy system that had become functionally unusable — poor information architecture, no Orion integration, and an audit trail that existed in theory but not in practice. This project is a ground-up redesign of how credit agreements are set up and managed.',
+        problem: 'The existing platform accumulated years of misaligned requirements. Users had developed workarounds that bypassed the system entirely. Orion integration was broken. Compliance teams had no reliable audit trail.',
+        approach: '[ Placeholder — describe your research approach, discovery findings, key design decisions, and iterations here. ]',
+        outcome: '[ Placeholder — describe what shipped, adoption metrics, and any measured impact here. ]',
+        beforeAfter: {
+          beforeLabel: 'Legacy platform — poor IA, broken Orion integration',
+          afterSrc: 'images/credit/01-empty-state.png',
+          afterLabel: 'Credit Risk — agreement setup redesign',
+        },
+        gallery: [
+          { src: 'images/credit/01-empty-state.png', caption: 'Empty state — clear onboarding into the agreement setup flow.' },
+          { src: 'images/credit/02-sec-view.png', caption: 'Securities view — structured agreement data with Orion integration and full audit trail.' },
+        ],
+      },
+      fx: {
+        label: 'FX Risk Management Tool',
+        title: 'FX Risk Management Tool',
+        subtitle: 'FX exposure views across fund families, with pivot presets and hedging ratios.',
+        figma: 'https://www.figma.com/design/TulzjRqLfMYvzUOeLhRc8Z/Portfolio-UX?node-id=71-474951',
+        meta: [
+          { label: 'Client',   value: 'A global investment bank' },
+          { label: 'Role',     value: 'Lead UX Designer' },
+          { label: 'Status',   value: 'In progress' },
+          { label: 'Type',     value: 'Greenfield · Enterprise · Risk' },
+          { label: 'Before',   value: 'TBD' },
+          { label: 'Year',     value: '2025' },
+        ],
+        overview: 'A greenfield tool giving risk managers a consolidated view of foreign exchange exposure across fund families. Includes configurable pivot presets, hedging ratio visualisation, and cashflow tracking by currency pair.',
+        problem: '[ Placeholder — describe the problem that existed before this tool. ]',
+        approach: '[ Placeholder — describe your research approach, discovery findings, key design decisions, and iterations here. ]',
+        outcome: '[ Placeholder — describe what shipped, adoption metrics, and any measured impact here. ]',
+        beforeAfter: {
+          beforeLabel: 'No consolidated FX view — exposure tracked ad hoc',
+          afterSrc: 'images/fx/01-equity-default.png',
+          afterLabel: 'FX Risk Management Tool — equity exposure view',
+        },
+        gallery: [
+          { src: 'images/fx/01-equity-default.png', caption: 'Equity default screen — FX exposure by fund family with hedging ratio overlay.' },
+          { src: 'images/fx/02-default-view.png', caption: 'Alternative view — exposure breakdown by currency pair with configurable pivot presets.' },
+        ],
+      },
+      redline: {
+        label: 'RedLine · Freelance',
+        title: 'RedLine',
+        subtitle: 'A mobile-first app for artists and producers to create, collaborate on, and digitally sign music contracts.',
+        figma: 'https://redline.figma.site',
+        figmaLabel: 'View live prototype',
+        meta: [
+          { label: 'Client',   value: 'Freelance' },
+          { label: 'Role',     value: 'Product Designer' },
+          { label: 'Status',   value: 'TBD' },
+          { label: 'Type',     value: 'Freelance · Mobile · Consumer' },
+          { label: 'Before',   value: 'No digital solution' },
+          { label: 'Year',     value: '2024' },
+        ],
+        overview: 'Music contracts are still largely handled through lawyers, email, and physical paper — inaccessible for independent artists and producers who lack legal infrastructure. RedLine is a mobile-first product that lets both parties draft, negotiate, and sign contracts without intermediaries.',
+        problem: 'No accessible digital solution existed for independent artists to manage music agreements. The process was opaque, expensive, and slow — favouring established acts with legal teams.',
+        approach: '[ Placeholder — describe your research approach, discovery findings, key design decisions, and iterations here. ]',
+        outcome: '[ Placeholder — describe what shipped, adoption metrics, and any measured impact here. ]',
+      },
+    };
 
-    document.getElementById('pw').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') checkPassword();
-    });
 
-    function checkPassword() {
-      const input = document.getElementById('pw').value;
-      const error = document.getElementById('error');
-      if (input === PASSWORD) {
-        window.location.href = PORTFOLIO_URL;
+    // ——— Password gate ——————————————————————————————————————————
+    const PW = 'designgeek';
+    let uxUnlocked = false;
+
+    function showGate() {
+      const gate = document.getElementById('pw-gate');
+      gate.style.display = 'flex';
+      requestAnimationFrame(() => requestAnimationFrame(() => gate.classList.add('visible')));
+      setTimeout(() => document.getElementById('pw-input').focus(), 320);
+    }
+
+    function hideGate() {
+      const gate = document.getElementById('pw-gate');
+      gate.classList.remove('visible');
+      setTimeout(() => { gate.style.display = 'none'; }, 300);
+    }
+
+    function checkPassword(e) {
+      e.preventDefault();
+      const input = document.getElementById('pw-input');
+      const error = document.getElementById('pw-error');
+      if (input.value.trim().toLowerCase() === PW) {
+        uxUnlocked = true;
+        hideGate();
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          document.getElementById('ux').classList.add('visible');
+        }));
       } else {
-        error.classList.add('visible');
-        document.getElementById('pw').value = '';
-        setTimeout(() => error.classList.remove('visible'), 2500);
+        input.classList.add('error');
+        error.textContent = 'Wrong password. Try again.';
+        input.value = '';
+        setTimeout(() => input.classList.remove('error'), 400);
       }
     }
+
+    // ——— Tab switching ——————————————————————————————————————————
+    const navThemes = { ux: 'nav--ux', hmu: 'nav--hmu', id: 'nav--id' };
+    let currentSection = 'ux';
+
+    function switchSection(id) {
+      if (id === currentSection) return;
+      if (id === 'ux' && !uxUnlocked) {
+        showGate();
+        return;
+      }
+
+      doSwitch(id);
+    }
+
+    function doSwitch(id) {
+      if (id === currentSection && document.getElementById(id).classList.contains('active')) return;
+      const prev = document.getElementById(currentSection);
+      const next = document.getElementById(id);
+      const nav  = document.getElementById('main-nav');
+
+      // Fade out current
+      prev.classList.remove('visible');
+      setTimeout(() => {
+        prev.classList.remove('active');
+        next.classList.add('active');
+        // Force reflow before fading in
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            next.classList.add('visible');
+          });
+        });
+      }, 280);
+
+      // Update nav theme
+      nav.className = navThemes[id];
+
+      // Update tab states
+      document.querySelectorAll('.nav-tabs button').forEach(btn => {
+        const isActive = btn.dataset.section === id;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-selected', isActive);
+      });
+
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      currentSection = id;
+    }
+
+    // Attach tab listeners
+    document.querySelectorAll('.nav-tabs button').forEach(btn => {
+      btn.addEventListener('click', () => switchSection(btn.dataset.section));
+    });
+
+    // UX is the default section — treat it as locked on initial load too
+    // Hide UX content and show gate immediately
+    (function() {
+      const uxSection = document.getElementById('ux');
+      uxSection.classList.remove('active');
+      const hmuSection = document.getElementById('hmu');
+      // Default to H&MU as the visible section, show gate for UX
+      // Actually: show gate straight away over UX
+      uxSection.classList.add('active');
+      showGate();
+    })();
+
+    // ——— Case study visual renderers ————————————————————————————
+    // Before/after pair. `beforeSrc` optional — falls back to a placeholder
+    // so you can drop the "before" (e.g. Excel) screengrab in later.
+    function renderBeforeAfter(data) {
+      const ba = data.beforeAfter;
+      if (!ba) return '';
+      const before = ba.beforeSrc
+        ? `<img class="cs-shot" src="${ba.beforeSrc}" loading="lazy" alt="${ba.beforeLabel || 'Before'}" />`
+        : `<div class="cs-shot cs-shot--ph">Insert "before" screengrab<br><span>${ba.beforeLabel || 'the old workflow'}</span></div>`;
+      const after = ba.afterSrc
+        ? `<img class="cs-shot" src="${ba.afterSrc}" loading="lazy" alt="${ba.afterLabel || 'After'}" />`
+        : `<div class="cs-shot cs-shot--ph">Insert "after" screen</div>`;
+      return `
+        <div class="cs-section">
+          <p class="cs-section-label">Before &amp; After</p>
+          <div class="cs-ba">
+            <figure class="cs-fig"><span class="cs-fig__tag cs-fig__tag--before">Before</span>${before}<figcaption>${ba.beforeLabel || ''}</figcaption></figure>
+            <figure class="cs-fig"><span class="cs-fig__tag cs-fig__tag--after">After</span>${after}<figcaption>${ba.afterLabel || ''}</figcaption></figure>
+          </div>
+        </div>`;
+    }
+
+    // Stacked gallery of real key screens. Falls back to placeholders
+    // for projects whose images haven't been pulled yet.
+    function renderGallery(data) {
+      if (!data.gallery || !data.gallery.length) {
+        return `
+          <div class="cs-img-placeholder">Insert Figma exports here</div>
+          <div class="cs-img-row">
+            <div class="cs-img-placeholder">Insert Figma exports here</div>
+            <div class="cs-img-placeholder">Insert Figma exports here</div>
+          </div>`;
+      }
+      return data.gallery.map(g => `
+        <figure class="cs-fig">
+          <img class="cs-shot" src="${g.src}" loading="lazy" alt="${g.caption || ''}" />
+          ${g.caption ? `<figcaption>${g.caption}</figcaption>` : ''}
+        </figure>`).join('');
+    }
+
+    // Walkthrough — a looping screen recording (MP4/GIF) of the core
+    // interaction. Drop a file path in `data.walkthrough` to go live;
+    // otherwise shows a labelled slot.
+    function renderWalkthrough(data) {
+      const w = data.walkthrough;
+      const body = w
+        ? (w.endsWith('.gif')
+            ? `<img class="cs-shot" src="${w}" loading="lazy" alt="Walkthrough" />`
+            : `<video class="cs-shot" src="${w}" autoplay muted loop playsinline></video>`)
+        : `<div class="cs-shot cs-shot--ph cs-shot--rec">Drop a screen recording here<br><span>the core interaction in motion — MP4 or GIF</span></div>`;
+      return `
+        <div class="cs-section">
+          <p class="cs-section-label">Walkthrough</p>
+          <figure class="cs-fig">${body}</figure>
+        </div>`;
+    }
+
+    // ——— Case study overlay —————————————————————————————————————
+    function openCaseStudy(id) {
+      const data = CASE_STUDIES[id];
+      if (!data) return;
+
+      const content = document.getElementById('case-study-content');
+      content.innerHTML = `
+        <p class="cs-label">${data.label}</p>
+        <h1 class="cs-title">${data.title}</h1>
+        <p class="cs-subtitle">${data.subtitle}</p>
+
+        <div class="cs-meta-grid">
+          ${data.meta.map(m => `
+            <div class="cs-meta-item">
+              <p class="cs-meta-item__label">${m.label}</p>
+              <p class="cs-meta-item__value">${m.value}</p>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="cs-section">
+          <p class="cs-section-label">Overview</p>
+          <p>${data.overview}</p>
+        </div>
+
+        <div class="cs-section">
+          <p class="cs-section-label">The Problem</p>
+          <p>${data.problem}</p>
+        </div>
+
+        <div class="cs-section">
+          <p class="cs-section-label">My Approach</p>
+          <p>${data.approach}</p>
+        </div>
+
+        ${renderBeforeAfter(data)}
+
+        <div class="cs-section">
+          <p class="cs-section-label">Key Screens</p>
+          ${renderGallery(data)}
+        </div>
+
+        ${renderWalkthrough(data)}
+
+        <div class="cs-section">
+          <p class="cs-section-label">Outcome</p>
+          <p>${data.outcome}</p>
+        </div>
+      `;
+
+      const overlay = document.getElementById('case-study-overlay');
+      overlay.classList.add('open');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          overlay.classList.add('visible');
+          overlay.scrollTop = 0;
+        });
+      });
+
+      // Trap scroll on body
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCaseStudy() {
+      const overlay = document.getElementById('case-study-overlay');
+      overlay.classList.remove('visible');
+      setTimeout(() => {
+        overlay.classList.remove('open');
+        document.body.style.overflow = '';
+      }, 300);
+    }
+
+    // Close on Escape
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeCaseStudy();
+    });
   </script>
 
 </body>
