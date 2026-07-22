@@ -355,6 +355,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 2px;
+      grid-auto-rows: 1fr;
     }
 
     .project-card {
@@ -364,6 +365,12 @@
       transition: background 0.2s ease;
       border: 1px solid var(--ux-border);
       margin: -1px 0 0 -1px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .project-card__desc {
+      flex: 1;
     }
 
     .project-card:hover {
@@ -816,6 +823,58 @@
       color: var(--ux-ink);
     }
 
+    /* Typewriter */
+    :root {
+      --tw-phrase-color: var(--ux-ink);
+      --tw-phrase-style: normal;
+    }
+
+    .tw-sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .tw-prefix { display: inline; }
+
+    .tw-phrase {
+      display: inline;
+      color: var(--tw-phrase-color);
+      font-style: var(--tw-phrase-style);
+    }
+
+    .tw-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 0.85em;
+      background: var(--ux-ink);
+      margin-left: 2px;
+      vertical-align: baseline;
+      position: relative;
+      top: 0.05em;
+      animation: tw-blink 1s step-start infinite;
+    }
+
+    @keyframes tw-blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    .tw-static { display: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tw-phrase, .tw-cursor { display: none; }
+      .tw-static {
+        display: inline;
+        font-style: italic;
+        color: var(--tw-phrase-color);
+      }
+    }
+
     /* UX About */
     .ux-about {
       padding: 64px 0 96px;
@@ -843,6 +902,14 @@
       line-height: 1.75;
       color: #3a3a3a;
       font-weight: 300;
+      margin-bottom: 24px;
+    }
+
+    .ux-about__text--lead {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--ux-ink);
+      margin-bottom: 28px;
     }
 
     .ux-about__link {
@@ -1003,12 +1070,33 @@
     }
 
     /* Alternate heights for editorial feel */
-    .credit-card:nth-child(1) .img-placeholder { height: 420px; }
-    .credit-card:nth-child(2) .img-placeholder { height: 280px; }
-    .credit-card:nth-child(3) .img-placeholder { height: 360px; }
-    .credit-card:nth-child(4) .img-placeholder { height: 320px; }
-    .credit-card:nth-child(5) .img-placeholder { height: 460px; }
-    .credit-card:nth-child(6) .img-placeholder { height: 300px; }
+    .credit-card:nth-child(1) .img-placeholder,
+    .credit-card:nth-child(1) .credit-card__img { height: 420px; }
+    .credit-card:nth-child(2) .img-placeholder,
+    .credit-card:nth-child(2) .credit-card__img { height: 280px; }
+    .credit-card:nth-child(3) .img-placeholder,
+    .credit-card:nth-child(3) .credit-card__img { height: 360px; }
+    .credit-card:nth-child(4) .img-placeholder,
+    .credit-card:nth-child(4) .credit-card__img { height: 320px; }
+    .credit-card:nth-child(5) .img-placeholder,
+    .credit-card:nth-child(5) .credit-card__img { height: 460px; }
+    .credit-card:nth-child(6) .img-placeholder,
+    .credit-card:nth-child(6) .credit-card__img { height: 300px; }
+
+    .credit-card__img {
+      display: block;
+      width: 100%;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .id-card__img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 4px;
+    }
 
     .credit-card__info {
       padding: 14px 0 6px;
@@ -1351,9 +1439,14 @@
     <!-- Hero -->
     <div class="ux-hero">
       <div class="container">
-        <p class="ux-hero__label">UX Design Analyst — Financial Services</p>
-        <h1 class="ux-hero__name">Designing <em>complex tools</em><br>for alternatives investment.</h1>
-        <p class="ux-hero__role">At a global investment bank — building the internal products that move capital, manage risk, and replace spreadsheets.</p>
+        <p class="ux-hero__label">Product Designer</p>
+        <h1 class="ux-hero__name">
+          <span class="tw-sr-only" aria-label="I design for messy systems, ambiguous problems, constant change, what doesn't fit, what's next."></span>
+          <span class="tw-prefix" aria-hidden="true">I design for</span><br aria-hidden="true">
+          <span class="tw-phrase" id="tw-phrase" aria-hidden="true"></span><span class="tw-cursor" id="tw-cursor" aria-hidden="true"></span>
+          <span class="tw-static">messy systems.</span>
+        </h1>
+        <p class="ux-hero__role">Currently at Goldman Sachs, designing complex solutions for alternative investments.</p>
         <div class="ux-hero__stats">
           <div class="ux-stat">
             <span class="ux-stat__num">3</span>
@@ -1379,7 +1472,6 @@
           <div class="project-card" data-id="cashroll" onclick="openCaseStudy('cashroll')">
             <p class="project-card__num">01</p>
             <h2 class="project-card__title">Cash Management Tool</h2>
-            <p class="project-card__codename">Codename: CashRoll</p>
             <p class="project-card__desc">A transaction data grid replacing manual Excel workflows for cash operations.</p>
             <div class="project-card__tags">
               <span class="tag">Enterprise</span>
@@ -1393,7 +1485,6 @@
           <div class="project-card" data-id="vela" onclick="openCaseStudy('vela')">
             <p class="project-card__num">02</p>
             <h2 class="project-card__title">Portfolio Valuation Platform</h2>
-            <p class="project-card__codename">Codename: Vela</p>
             <p class="project-card__desc">A valuation and marking tool for private equity portfolios with approval workflows.</p>
             <div class="project-card__tags">
               <span class="tag">Enterprise</span>
@@ -1459,7 +1550,6 @@
           <div class="project-card" data-id="redline" onclick="openCaseStudy('redline')">
             <p class="project-card__num">07</p>
             <h2 class="project-card__title">RedLine</h2>
-            <p class="project-card__codename">Freelance</p>
             <p class="project-card__desc">A mobile-first app for artists and producers to create, collaborate on, and digitally sign music contracts.</p>
             <div class="project-card__tags">
               <span class="tag">Freelance</span>
@@ -1479,9 +1569,11 @@
         <div class="ux-about__inner">
           <span class="ux-about__label">About</span>
           <div>
-            <p class="ux-about__text">
-              Three years designing for alternatives investment at a global investment bank. Seven greenfield products — most replacing Excel, one replacing nothing at all. The work sits at the intersection of financial complexity and operational clarity: data-heavy tools built for people who know exactly what they need, even if they can't always articulate it. Industrial Design graduate (Loughborough, 2023). Independently working across enterprise fintech and consumer mobile.
-            </p>
+            <p class="ux-about__text ux-about__text--lead">I design for complexity.</p>
+            <p class="ux-about__text">Three years designing alternative investment products at Goldman Sachs. <strong>Seven greenfield products — most replacing Excel, one replacing nothing at all.</strong></p>
+            <p class="ux-about__text">I work where complexity, ambiguity and constraint collide: translating fragmented workflows, dense data and technically complex systems into products that make the impossible feel inevitable.</p>
+            <p class="ux-about__text">I work end-to-end, often as the sole designer — from the first question to the shipped product. Increasingly, that means <strong>designing with AI, building with AI</strong>, and exploring what becomes possible when the boundaries between designer and builder start to blur.</p>
+            <p class="ux-about__text">Industrial Design graduate from Loughborough University (2023). Independently working across enterprise fintech and consumer mobile.</p>
             <a href="#" class="ux-about__link">LinkedIn ↗</a>
           </div>
         </div>
@@ -1548,69 +1640,7 @@
     <div class="hmu-credits">
       <div class="container">
         <p class="hmu-credits__header">Selected Credits</p>
-        <div class="hmu-grid">
-
-          <div class="credit-card">
-            <div class="img-placeholder">Insert editorial image here</div>
-            <div class="credit-card__info">
-              <p class="credit-card__client">Sicky Magazine</p>
-              <div class="credit-card__meta">
-                <span class="credit-card__category cat--pink">Editorial</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="credit-card">
-            <div class="img-placeholder">Insert editorial image here</div>
-            <div class="credit-card__info">
-              <p class="credit-card__client">KFC Christmas Commercial</p>
-              <div class="credit-card__meta">
-                <span class="credit-card__category cat--teal">Commercial</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="credit-card">
-            <div class="img-placeholder">Insert editorial image here</div>
-            <div class="credit-card__info">
-              <p class="credit-card__client">Warner Music</p>
-              <div class="credit-card__meta">
-                <span class="credit-card__category cat--pink">Music Video</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="credit-card">
-            <div class="img-placeholder">Insert editorial image here</div>
-            <div class="credit-card__info">
-              <p class="credit-card__client">London Fashion Week</p>
-              <div class="credit-card__meta">
-                <span class="credit-card__category cat--white">Runway</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="credit-card">
-            <div class="img-placeholder">Insert editorial image here</div>
-            <div class="credit-card__info">
-              <p class="credit-card__client">Africa Fashion Week</p>
-              <div class="credit-card__meta">
-                <span class="credit-card__category cat--white">Runway</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="credit-card">
-            <div class="img-placeholder">Insert editorial image here</div>
-            <div class="credit-card__info">
-              <p class="credit-card__client">Styled with Karen Binns</p>
-              <div class="credit-card__meta">
-                <span class="credit-card__category cat--teal">Collaboration</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
+        <div class="hmu-grid" id="hmu-grid"><!-- rendered from MAKEUP_CREDITS --></div>
       </div>
     </div>
 
@@ -1662,51 +1692,7 @@
     <div class="id-work">
       <div class="container">
         <p class="id-work__header">Degree Projects</p>
-        <div class="id-grid">
-
-          <div class="id-card">
-            <div class="img-placeholder">Insert project image here</div>
-            <p class="id-card__year">2023</p>
-            <h2 class="id-card__title">Project Title Placeholder</h2>
-            <p class="id-card__desc">One-line description of the project — material, method, or problem addressed.</p>
-          </div>
-
-          <div class="id-card">
-            <div class="img-placeholder">Insert project image here</div>
-            <p class="id-card__year">2022</p>
-            <h2 class="id-card__title">Project Title Placeholder</h2>
-            <p class="id-card__desc">One-line description of the project — material, method, or problem addressed.</p>
-          </div>
-
-          <div class="id-card">
-            <div class="img-placeholder">Insert project image here</div>
-            <p class="id-card__year">2022</p>
-            <h2 class="id-card__title">Project Title Placeholder</h2>
-            <p class="id-card__desc">One-line description of the project — material, method, or problem addressed.</p>
-          </div>
-
-          <div class="id-card">
-            <div class="img-placeholder">Insert project image here</div>
-            <p class="id-card__year">2021</p>
-            <h2 class="id-card__title">Project Title Placeholder</h2>
-            <p class="id-card__desc">One-line description of the project — material, method, or problem addressed.</p>
-          </div>
-
-          <div class="id-card">
-            <div class="img-placeholder">Insert project image here</div>
-            <p class="id-card__year">2021</p>
-            <h2 class="id-card__title">Project Title Placeholder</h2>
-            <p class="id-card__desc">One-line description of the project — material, method, or problem addressed.</p>
-          </div>
-
-          <div class="id-card">
-            <div class="img-placeholder">Insert project image here</div>
-            <p class="id-card__year">2020</p>
-            <h2 class="id-card__title">Project Title Placeholder</h2>
-            <p class="id-card__desc">One-line description of the project — material, method, or problem addressed.</p>
-          </div>
-
-        </div>
+        <div class="id-grid" id="id-grid"><!-- rendered from ID_PROJECTS --></div>
       </div>
     </div>
 
@@ -1718,6 +1704,28 @@
   <script>
     // ——— Case study data ———————————————————————————————————————
     // Add or expand entries here. Each key matches the data-id on the card.
+    // ——— Hair & Makeup credits ————————————————————————————————
+    // Source of truth for the Makeup section. Desktop mode reads this too.
+    const MAKEUP_CREDITS = [
+      { client: 'Sicky Magazine',        category: 'Editorial',     tone: 'pink',  img: '' },
+      { client: 'KFC Christmas Commercial', category: 'Commercial', tone: 'teal',  img: '' },
+      { client: 'Warner Music',          category: 'Music Video',   tone: 'pink',  img: '' },
+      { client: 'London Fashion Week',   category: 'Runway',        tone: 'white', img: '' },
+      { client: 'Africa Fashion Week',   category: 'Runway',        tone: 'white', img: '' },
+      { client: 'Styled with Karen Binns', category: 'Collaboration', tone: 'teal', img: '' },
+    ];
+
+    // ——— Industrial Design projects ——————————————————————————————
+    // Source of truth for the Industrial Design section. Desktop mode reads this too.
+    const ID_PROJECTS = [
+      { year: '2023', title: 'Project Title Placeholder', desc: 'One-line description of the project — material, method, or problem addressed.', img: '' },
+      { year: '2022', title: 'Project Title Placeholder', desc: 'One-line description of the project — material, method, or problem addressed.', img: '' },
+      { year: '2022', title: 'Project Title Placeholder', desc: 'One-line description of the project — material, method, or problem addressed.', img: '' },
+      { year: '2021', title: 'Project Title Placeholder', desc: 'One-line description of the project — material, method, or problem addressed.', img: '' },
+      { year: '2021', title: 'Project Title Placeholder', desc: 'One-line description of the project — material, method, or problem addressed.', img: '' },
+      { year: '2020', title: 'Project Title Placeholder', desc: 'One-line description of the project — material, method, or problem addressed.', img: '' },
+    ];
+
     const CASE_STUDIES = {
       cashroll: {
         label: 'Cash Management Tool · Codename: CashRoll',
@@ -2135,10 +2143,87 @@
       }, 300);
     }
 
+    // ——— Typewriter ————————————————————————————————————————————
+    (function () {
+      const PHRASES   = ['messy systems.', 'ambiguous problems.', 'constant change.', "what doesn't fit.", "what's next."];
+      const COLORS    = ['#3BF1D6', '#7AFE8E', '#FF6A9C', '#FF6F61', '#C643E0', '#FFF36A', '#5768FF'];
+      const TYPE_MS   = 65, DELETE_MS = 35, HOLD_MS = 1800, PAUSE_MS = 300;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const phraseEl  = document.getElementById('tw-phrase');
+      const cursorEl  = document.getElementById('tw-cursor');
+      if (!phraseEl) return;
+      // Faint black outline only for the pale yellow, to keep it WCAG-legible
+      const YELLOW = '#FFF36A';
+      const applyColor = (hex) => {
+        phraseEl.style.color = hex;
+        if (cursorEl) cursorEl.style.background = hex;
+        phraseEl.style.webkitTextStroke = (hex.toUpperCase() === YELLOW)
+          ? '0.2px rgba(0,0,0,0.55)'
+          : '0';
+      };
+      let phraseIdx = 0, charIdx = 0, typing = true, colorIdx = 0;
+      applyColor(COLORS[0]);
+      function tick() {
+        const target = PHRASES[phraseIdx];
+        if (typing) {
+          phraseEl.textContent = target.slice(0, ++charIdx);
+          if (charIdx === target.length) { typing = false; setTimeout(tick, HOLD_MS); }
+          else setTimeout(tick, TYPE_MS);
+        } else {
+          phraseEl.textContent = target.slice(0, --charIdx);
+          if (charIdx === 0) {
+            typing = true;
+            phraseIdx = (phraseIdx + 1) % PHRASES.length;
+            colorIdx  = (colorIdx + 1) % COLORS.length;
+            applyColor(COLORS[colorIdx]);
+            setTimeout(tick, PAUSE_MS);
+          }
+          else setTimeout(tick, DELETE_MS);
+        }
+      }
+      setTimeout(tick, 600);
+    })();
+
     // Close on Escape
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') closeCaseStudy();
     });
+
+    // ——— Render Makeup credits from data ————————————————————————
+    function renderMakeupCredits() {
+      const grid = document.getElementById('hmu-grid');
+      if (!grid) return;
+      grid.innerHTML = MAKEUP_CREDITS.map(c => `
+        <div class="credit-card">
+          ${c.img
+            ? `<img class="credit-card__img" src="${c.img}" alt="${c.client} — ${c.category}">`
+            : `<div class="img-placeholder">Insert editorial image here</div>`}
+          <div class="credit-card__info">
+            <p class="credit-card__client">${c.client}</p>
+            <div class="credit-card__meta">
+              <span class="credit-card__category cat--${c.tone}">${c.category}</span>
+            </div>
+          </div>
+        </div>`).join('');
+    }
+
+    // ——— Render Industrial Design projects from data ——————————————
+    function renderIdProjects() {
+      const grid = document.getElementById('id-grid');
+      if (!grid) return;
+      grid.innerHTML = ID_PROJECTS.map(p => `
+        <div class="id-card">
+          ${p.img
+            ? `<img class="id-card__img" src="${p.img}" alt="${p.title}">`
+            : `<div class="img-placeholder">Insert project image here</div>`}
+          <p class="id-card__year">${p.year}</p>
+          <h2 class="id-card__title">${p.title}</h2>
+          <p class="id-card__desc">${p.desc}</p>
+        </div>`).join('');
+    }
+
+    renderMakeupCredits();
+    renderIdProjects();
   </script>
 
 </body>
