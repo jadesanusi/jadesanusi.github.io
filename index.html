@@ -40,6 +40,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Barlow+Condensed:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&display=swap" rel="stylesheet" />
 
   <style>
     /* ============================================================
@@ -53,7 +54,7 @@
 
     :root {
       /* UX palette */
-      --ux-bg: #f7f7f7;
+      --ux-bg: #ffffff;
       --ux-surface: #ffffff;
       --ux-ink: #1a1a1a;
       --ux-muted: #6b6b6b;
@@ -123,7 +124,7 @@
     }
 
     nav.nav--ux {
-      background: rgba(247, 247, 247, 0.92);
+      background: rgba(255, 255, 255, 0.92);
       border-color: rgba(0,0,0,0.08);
     }
 
@@ -138,12 +139,25 @@
     }
 
     .nav-name {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
       font-family: 'DM Sans', sans-serif;
       font-weight: 500;
       font-size: 15px;
       letter-spacing: 0.01em;
       transition: color var(--transition);
     }
+    .nav-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #ffffff;
+      border: 1.5px solid #1a1a1a;
+      flex-shrink: 0;
+    }
+    nav.nav--hmu .nav-avatar { border-color: #ffffff; }
 
     nav.nav--hmu .nav-name {
       color: #ffffff;
@@ -224,6 +238,336 @@
       border-color: var(--id-ink);
     }
 
+    /* Wordmark as link — strip anchor defaults */
+    .nav-name {
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    /* Download CV pill */
+    .nav-cv {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: 8px 20px;
+      border-radius: var(--radius-pill);
+      background: #1a1a1a;
+      color: #ffffff;
+      text-decoration: none;
+      border: 1.5px solid #1a1a1a;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .nav-cv:hover { opacity: 0.85; transform: translateY(-1px); }
+    nav.nav--hmu .nav-cv { background: #fff; color: #000; border-color: #fff; }
+
+    /* ============================================================
+       DESKTOP LAYER — hand-drawn Finder menu bar + icons
+       (additive; sits inside #ux, revealed after unlock)
+    ============================================================ */
+
+    /* ── Finder menu bar ──
+       Full page width, matching the top nav's 40px padding — so the bar's left
+       edge lines up with the "Jadesola Sanusi" wordmark and its right edge with
+       the "Download CV" button. Hero text + folders sit inset within this frame. */
+    .finder-bar {
+      position: relative;
+      width: 100%;
+      margin: 56px 0 30px;      /* 56px below nav divider, 30px above hero (wireframe) */
+      padding: 0 40px;          /* edges align with the nav wordmark (L) and Download CV (R) */
+      line-height: 0;
+    }
+    .finder-bar__img {
+      display: block;
+      width: 100%;
+      /* Opt 1 is 11442×353. Trim height ~10% so the bar sits in line with the
+         nav's wordmark + Download CV button, while edges stay aligned to them. */
+      aspect-ratio: 11442 / 318;
+      height: auto;
+      object-fit: fill;
+    }
+    /* Everything in the bar is baked into the image — interactivity comes
+       from invisible hotspot buttons positioned by % over each drawing. */
+    .finder-bar__wrap {
+      position: relative;
+      line-height: 0;
+    }
+    .fb-spot {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      border-radius: 6px;
+    }
+    .fb-spot:focus-visible {
+      outline: 2px solid #5768FF;
+      outline-offset: 2px;
+    }
+    /* Live clock over the baked date. Patch matches the page bg (#ffffff); it
+       only covers the middle band so the bar's top/bottom outline stays visible. */
+    .fb-livedate {
+      position: absolute;
+      top: 20%;
+      bottom: 20%;
+      left: 82.3%;
+      width: 10.9%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      font-family: 'Patrick Hand', cursive;   /* upright marker hand — matches the baked lettering */
+      font-weight: 400;
+      font-size: clamp(15px, 1.55vw, 20px);
+      color: #1a1a1a;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 3;
+    }
+    /* Hand-drawn toast bubble that answers hotspot clicks */
+    .fb-toast {
+      position: absolute;
+      top: calc(100% + 10px);
+      transform: translateX(-50%);
+      background: #fdfdfb;
+      border: 2px solid #1a1a1a;
+      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+      padding: 7px 16px;
+      font-family: 'Caveat', cursive;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: #1a1a1a;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease;
+      z-index: 50;
+    }
+    .fb-toast.show { opacity: 1; }
+
+    /* ── Desktop icons column ── */
+    .desktop-icons {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 40px;              /* RHS padding matches the LHS nav/toolbar padding */
+      left: max(58%, 720px);    /* RHS-only drag zone — clears the hero text on the left */
+      z-index: 2;
+      pointer-events: none;     /* only the icons themselves are interactive */
+    }
+    .desktop-icon {
+      position: absolute;       /* scattered, individually placed + draggable */
+      background: none;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 4px;
+      cursor: grab;
+      touch-action: none;       /* pointer drag on touch devices */
+      transition: transform 0.15s ease;
+      line-height: 0;
+      pointer-events: auto;
+    }
+    .desktop-icon.dragging {
+      cursor: grabbing;
+      z-index: 20;
+      transition: none;
+    }
+
+    /* ── Decorative designer's annotations ── */
+    .hero-annotations {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;   /* never blocks clicks on icons/links beneath */
+      z-index: 3;
+    }
+    .annot {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.7s ease;
+    }
+    .annot img {
+      display: block;
+      pointer-events: none;
+      -webkit-user-drag: none;
+      user-select: none;
+    }
+    .annot.show {
+      opacity: 1;
+      animation: annot-float 3.6s ease-in-out infinite;
+    }
+    @keyframes annot-float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-4px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .annot.show { animation: none; }
+    }
+
+    /* SCROLL — lower-centre of hero, text above, arrow below pointing down */
+    .annot--scroll { left: 41%; bottom: 20px; align-items: flex-start; }
+    .annot--scroll .annot__text  { width: 150px; }
+    .annot--scroll .annot__arrow { width: 46px; margin-left: 40px; }
+
+    /* FOLIOS — below-left of the folder cluster, arrow up-right, text below */
+    .annot--folios { left: 60%; top: 54%; align-items: flex-start; }
+    .annot--folios .annot__arrow { width: 60px; transform: rotate(8deg); margin-left: 90px; }
+    .annot--folios .annot__text  { width: 200px; }
+
+    /* CLICKABLE — anchored below-left of the icon cluster (only if room) */
+    .annot--clickable { left: 63%; top: 30%; align-items: flex-start; }
+    .annot--clickable .annot__arrow { width: 58px; margin-left: 70px; }
+    .annot--clickable .annot__text  { width: 120px; }
+
+    @media (max-width: 768px) {
+      .hero-annotations { display: none; }
+    }
+    /* Folder/disk icons share a native width (284px) → same width = same scale.
+       Sized to the wireframe's ~93px icon slot (374/4). */
+    .desktop-icon img {
+      display: block;
+      width: clamp(129px, 11.3vw, 146px);   /* 1.4× larger */
+      height: auto;
+      pointer-events: none;
+    }
+    /* Trash is a narrower native image (129px); keep proportional to the folders */
+    .desktop-icon--trash img {
+      width: clamp(69px, 6vw, 78px);
+    }
+    /* Macintosh HD reads a touch small (its disk fills less of the canvas) — nudge up */
+    .desktop-icon[data-icon="mac-hd"] img {
+      width: clamp(139px, 12.2vw, 157px);
+    }
+    .desktop-icon:hover { transform: scale(1.03); }
+    .desktop-icon:focus-visible {
+      outline: 2px solid #5768FF;
+      outline-offset: 2px;
+    }
+
+    /* ── Finder / About / Trash modal ── */
+    .fw-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: rgba(20,20,20,0.32);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .fw-backdrop.open { opacity: 1; pointer-events: auto; }
+    .finder-window {
+      background: #fdfdfb;
+      width: min(720px, 94vw);
+      max-height: 82vh;
+      border-radius: 14px;
+      border: 2.5px solid #1a1a1a;
+      box-shadow: 6px 8px 0 rgba(26,26,26,0.14);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(8px) scale(0.98);
+      transition: transform 0.2s ease;
+      /* wobbly hand-drawn edge */
+      border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    }
+    .fw-backdrop.open .finder-window { transform: translateY(0) scale(1); }
+    .fw-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      border-bottom: 2px solid #1a1a1a;
+      background: #f3f1ea;
+      cursor: default;
+    }
+    .fw-lights { display: flex; gap: 7px; }
+    .fw-light {
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(0,0,0,0.55);
+    }
+    .fw-light--red { background: #FF6058; }
+    .fw-light--amber { background: #FFBD2E; }
+    .fw-light--green { background: #28C840; }
+    .fw-close {
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(0,0,0,0.55);
+      background: #FF6058;
+      cursor: pointer;
+      padding: 0;
+    }
+    .fw-close:focus-visible { outline: 2px solid #5768FF; outline-offset: 2px; }
+    .fw-title {
+      font-family: 'Caveat', cursive;
+      font-weight: 700;
+      font-size: 22px;
+      color: #1a1a1a;
+      margin: 0 auto 0 4px;
+      transform: translateX(-13px); /* optically center past the lights */
+    }
+    .fw-body {
+      padding: 40px 32px;
+      overflow-y: auto;
+      font-family: 'DM Sans', sans-serif;
+      color: #1a1a1a;
+    }
+    .fw-placeholder {
+      font-family: 'Caveat', cursive;
+      font-size: 30px;
+      font-weight: 700;
+      text-align: center;
+      color: #8a8a8a;
+      padding: 60px 20px;
+    }
+    .fw-about h3 {
+      font-family: 'Caveat', cursive;
+      font-size: 30px;
+      margin: 0 0 16px;
+    }
+    .fw-about dl {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 8px 20px;
+      font-size: 14px;
+    }
+    .fw-about dt { color: #888; }
+    .fw-about dd { margin: 0; font-weight: 500; }
+    .fw-egg {
+      text-align: center;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .fw-egg .fw-egg__big {
+      font-family: 'Caveat', cursive;
+      font-size: 34px;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    /* ── Responsive — hide desktop layer where it can't fit ── */
+    @media (max-width: 1024px) {
+      .desktop-icons { display: none; }
+    }
+    @media (max-width: 640px) {
+      /* Bar gets too thin to read — hide it entirely; icons already hidden at 900px */
+      .finder-bar { display: none; }
+    }
+
     /* ============================================================
        SECTION SYSTEM
     ============================================================ */
@@ -277,8 +621,26 @@
 
     /* UX Hero */
     .ux-hero {
-      padding: 88px 0 72px;
+      padding: 0 0 72px;        /* top gap comes from the toolbar's 30px margin (wireframe) */
       border-bottom: 1px solid var(--ux-border);
+      position: relative;
+      min-height: 500px;        /* desktop area for the scattered folder icons */
+    }
+    /* Desktop landing: push the hero content flush to the left edge
+       (folders live flush right) so the two sit at opposite margins. */
+    .ux-hero > .container {
+      margin-left: 0;
+      margin-right: 0;
+      max-width: none;
+      padding-left: 81px;   /* hero content inset per wireframe (324/4) */
+      padding-right: 0;
+    }
+    .ux-hero > .container > * {
+      max-width: 502px;     /* text column width per wireframe (2010/4) */
+    }
+    /* Headline is exempt — the typed phrase must never wrap to a 3rd line */
+    .ux-hero > .container > .ux-hero__name {
+      max-width: none;
     }
 
     .ux-hero__label {
@@ -354,7 +716,7 @@
     .ux-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 2px;
+      gap: 24px;
       grid-auto-rows: 1fr;
     }
 
@@ -554,13 +916,71 @@
       transition: opacity 0.2s;
     }
 
+    /* ── "What's the password?" easter egg ── */
+    .pw-hint {
+      position: relative;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .pw-hint__link {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: var(--ux-muted);
+      background: none;
+      border: none;
+      padding: 2px 4px;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      transition: color 0.2s ease;
+    }
+    .pw-hint__link:hover { color: var(--ux-ink); }
+    .pw-hint__bubble {
+      position: absolute;
+      top: calc(100% + 12px);
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      width: max-content;
+      max-width: 280px;
+      background: #fdfdfb;
+      border: 2px solid #1a1a1a;
+      border-radius: 235px 15px 225px 15px / 15px 225px 15px 255px;
+      padding: 14px 18px;
+      font-family: 'Patrick Hand', cursive;   /* upright, matches the toolbar hand */
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.3;
+      color: #1a1a1a;
+      text-align: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 60;
+    }
+    .pw-hint__bubble[hidden] { display: none; }
+    .pw-hint__bubble.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .pw-hint__bubble .pw-pw { font-weight: 700; }
+    .pw-hint__bubble .pw-note { display: block; margin-top: 4px; font-size: 15px; color: #8a8a8a; }
+    .pw-hint__bubble .pw-copied { display: block; margin-top: 6px; font-size: 14px; color: #2a9d5c; }
+    /* little tail pointing up to the link */
+    .pw-hint__bubble::before {
+      content: "";
+      position: absolute;
+      top: -9px; left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 12px; height: 12px;
+      background: #fdfdfb;
+      border-left: 2px solid #1a1a1a;
+      border-top: 2px solid #1a1a1a;
+    }
+
     /* UX Case Study Modal / Overlay */
     .case-study-overlay {
       display: none;
       position: fixed;
       inset: 0;
       z-index: 200;
-      background: #f7f7f7;
+      background: #ffffff;
       overflow-y: auto;
       opacity: 0;
       transition: opacity 0.3s ease;
@@ -845,6 +1265,7 @@
       display: inline;
       color: var(--tw-phrase-color);
       font-style: var(--tw-phrase-style);
+      white-space: nowrap;   /* the typed phrase stays on one line */
     }
 
     .tw-cursor {
@@ -1417,18 +1838,11 @@
        NAVIGATION
   ============================================================ -->
   <nav id="main-nav" class="nav--ux" role="navigation" aria-label="Main navigation">
-    <span class="nav-name">Jadesola Sanusi</span>
-    <ul class="nav-tabs" role="tablist">
-      <li role="none">
-        <button role="tab" aria-selected="true"  aria-controls="ux"  data-section="ux"  class="active">UX Design</button>
-      </li>
-      <li role="none">
-        <button role="tab" aria-selected="false" aria-controls="hmu" data-section="hmu">Hair &amp; Makeup</button>
-      </li>
-      <li role="none">
-        <button role="tab" aria-selected="false" aria-controls="id"  data-section="id">Industrial Design</button>
-      </li>
-    </ul>
+    <a href="#" class="nav-name" onclick="window.scrollTo({top:0,behavior:'smooth'});" aria-label="Jadesola Sanusi — home">
+      <img class="nav-avatar" src="assets/avatar.png" alt="" aria-hidden="true" />
+      <span>Jadesola Sanusi</span>
+    </a>
+    <a class="nav-cv" href="assets/Jadesola-Sanusi-CV.zip" download>Download CV</a>
   </nav>
 
   <!-- ============================================================
@@ -1436,8 +1850,41 @@
   ============================================================ -->
   <section id="ux" class="section active" role="tabpanel" aria-label="UX Design">
 
+    <!-- Doodle Finder menu bar (desktop layer) -->
+    <div class="finder-bar" id="finder-bar">
+      <div class="finder-bar__wrap">
+        <img class="finder-bar__img" src="assets/toolbar-opt1.png" alt="" aria-hidden="true" />
+        <!-- Invisible hotspots over the baked drawings -->
+        <button class="fb-spot" id="fb-apple" style="left:1.6%;width:2.9%" aria-label="About this designer"></button>
+        <button class="fb-spot" data-spot="shrug"   style="left:60.2%;width:7.3%"  aria-label="Shrug"></button>
+        <button class="fb-spot" data-spot="wifi"    style="left:68%;width:3%"      aria-label="Wi-Fi"></button>
+        <button class="fb-spot" data-spot="volume"  style="left:71.4%;width:3%"    aria-label="Volume"></button>
+        <button class="fb-spot" data-spot="battery" style="left:74.6%;width:3%"    aria-label="Battery"></button>
+        <button class="fb-spot" data-spot="clock"   style="left:78.6%;width:11.3%" aria-label="Clock"></button>
+        <button class="fb-spot" data-spot="search"  style="left:92%;width:3%"      aria-label="Search"></button>
+        <button class="fb-spot" data-spot="menu"    style="left:95.2%;width:3.2%"  aria-label="Menu"></button>
+        <!-- Live clock overlaid on the baked date (patch hides the printed one) -->
+        <span class="fb-livedate" id="fb-livedate" role="status" aria-label="Current date and time"></span>
+      </div>
+    </div>
+
     <!-- Hero -->
     <div class="ux-hero">
+      <!-- Desktop icons (additive, float right of hero) -->
+      <div class="desktop-icons" aria-label="Desktop — drag the icons around">
+        <button class="desktop-icon" data-icon="mac-hd" style="top:2%; left:34%" aria-label="Macintosh HD — About this designer">
+          <img src="assets/icons/mac-hd.svg" alt="Macintosh HD" />
+        </button>
+        <button class="desktop-icon" data-icon="industrial" style="top:6%; left:70%" aria-label="Industrial Design Portfolio folder">
+          <img src="assets/icons/industrial-design.svg" alt="Industrial Design Portfolio" />
+        </button>
+        <button class="desktop-icon" data-icon="editorial" style="top:46%; left:6%" aria-label="Editorial HMUA folder">
+          <img src="assets/icons/editorial-hmua.svg" alt="Editorial HMUA" />
+        </button>
+        <button class="desktop-icon desktop-icon--trash" data-icon="trash" style="top:60%; left:60%" aria-label="Trash">
+          <img src="assets/icons/trash.svg" alt="Trash" />
+        </button>
+      </div>
       <div class="container">
         <p class="ux-hero__label">Product Designer</p>
         <h1 class="ux-hero__name">
@@ -1456,6 +1903,19 @@
             <span class="ux-stat__num">7</span>
             <span class="ux-stat__label">Greenfield projects</span>
           </div>
+        </div>
+      </div>
+
+      <!-- Decorative designer's annotations (first-visit only, purely visual) -->
+      <div class="hero-annotations" id="hero-annotations" aria-hidden="true">
+        <div class="annot annot--scroll" data-annot="scroll">
+          <img class="annot__text"  src="assets/annotations/scroll-text.png"  alt="" />
+        </div>
+        <div class="annot annot--folios" data-annot="folios">
+          <img class="annot__text"  src="assets/annotations/folios-text.png"  alt="" />
+        </div>
+        <div class="annot annot--clickable" data-annot="clickable">
+          <img class="annot__text"  src="assets/annotations/clickable-text.png"  alt="" />
         </div>
       </div>
     </div>
@@ -1574,7 +2034,7 @@
             <p class="ux-about__text">I work where complexity, ambiguity and constraint collide: translating fragmented workflows, dense data and technically complex systems into products that make the impossible feel inevitable.</p>
             <p class="ux-about__text">I work end-to-end, often as the sole designer — from the first question to the shipped product. Increasingly, that means <strong>designing with AI, building with AI</strong>, and exploring what becomes possible when the boundaries between designer and builder start to blur.</p>
             <p class="ux-about__text">Industrial Design graduate from Loughborough University (2023). Independently working across enterprise fintech and consumer mobile.</p>
-            <a href="#" class="ux-about__link">LinkedIn ↗</a>
+            <a href="https://www.linkedin.com/in/jadesanusi/" class="ux-about__link" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
           </div>
         </div>
       </div>
@@ -1595,6 +2055,12 @@
         <p class="pw-gate__error" id="pw-error" aria-live="polite"></p>
         <button class="pw-gate__btn" type="submit">Enter</button>
       </form>
+
+      <!-- Easter egg: understated "forgot password"-style link -->
+      <div class="pw-hint">
+        <button type="button" class="pw-hint__link" id="pw-hint-link" aria-expanded="false" aria-controls="pw-hint-bubble">What's the password?</button>
+        <div class="pw-hint__bubble" id="pw-hint-bubble" role="status" aria-live="polite" hidden></div>
+      </div>
     </div>
   </div>
 
@@ -1950,6 +2416,73 @@
       }
     }
 
+    // ——— "What's the password?" easter egg ——————————————————————
+    (function () {
+      const link   = document.getElementById('pw-hint-link');
+      const bubble = document.getElementById('pw-hint-bubble');
+      if (!link || !bubble) return;
+      let open = false, revealTimer = null;
+
+      const REVEAL = `It's: <span class="pw-pw">designgeek</span>` +
+                     `<span class="pw-note">(don't tell anyone. or do. I clearly don't mind.)</span>`;
+
+      function openBubble() {
+        clearTimeout(revealTimer);
+        bubble.hidden = false;
+        bubble.classList.remove('pw-copied-shown');
+        // a beat of reluctance, then the reveal
+        bubble.innerHTML = `<span>...fine.</span>`;
+        requestAnimationFrame(() => bubble.classList.add('show'));
+        revealTimer = setTimeout(() => { bubble.innerHTML = REVEAL; }, 600);
+        open = true;
+        link.setAttribute('aria-expanded', 'true');
+        document.addEventListener('keydown', onKey);
+        setTimeout(() => document.addEventListener('click', onOutside), 0);
+      }
+
+      function closeBubble() {
+        clearTimeout(revealTimer);
+        bubble.classList.remove('show');
+        setTimeout(() => { if (!open) bubble.hidden = true; }, 200);
+        open = false;
+        link.setAttribute('aria-expanded', 'false');
+        document.removeEventListener('keydown', onKey);
+        document.removeEventListener('click', onOutside);
+      }
+
+      function onKey(e) { if (e.key === 'Escape') closeBubble(); }
+      function onOutside(e) {
+        if (!bubble.contains(e.target) && e.target !== link) closeBubble();
+      }
+
+      link.addEventListener('click', (e) => {
+        e.stopPropagation();
+        open ? closeBubble() : openBubble();
+      });
+
+      // Clicking the bubble copies the password
+      bubble.addEventListener('click', (e) => {
+        e.stopPropagation();
+        // primary: async clipboard; fallback: execCommand for older/untrusted contexts
+        try { navigator.clipboard && navigator.clipboard.writeText('designgeek'); } catch (_) {}
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = 'designgeek';
+          ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        } catch (_) {}
+        if (!bubble.querySelector('.pw-copied')) {
+          const c = document.createElement('span');
+          c.className = 'pw-copied';
+          c.textContent = 'copied!';
+          bubble.appendChild(c);
+        }
+      });
+    })();
+
     // ——— Tab switching ——————————————————————————————————————————
     const navThemes = { ux: 'nav--ux', hmu: 'nav--hmu', id: 'nav--id' };
     let currentSection = 'ux';
@@ -2224,7 +2757,301 @@
 
     renderMakeupCredits();
     renderIdProjects();
+
+    // ——— Desktop layer: live clock ——————————————————————————————
+    (function () {
+      const clockEl = document.getElementById('fb-clock');
+      if (!clockEl) return;
+      const fmt = new Intl.DateTimeFormat('en-GB', {
+        weekday: 'short', day: 'numeric', month: 'short',
+        hour: '2-digit', minute: '2-digit', hour12: false
+      });
+      function paint() {
+        // "Wed, 22 Jul 20:41"
+        const parts = fmt.formatToParts(new Date());
+        const p = Object.fromEntries(parts.map(x => [x.type, x.value]));
+        clockEl.textContent = `${p.weekday}, ${p.day} ${p.month} ${p.hour}:${p.minute}`;
+      }
+      paint();
+      // Sync to the top of the next minute, then tick every 60s
+      const now = new Date();
+      const msToMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+      setTimeout(() => { paint(); setInterval(paint, 60000); }, msToMinute);
+    })();
+
+    // ——— Desktop layer: reusable Finder window modal ——————————————
+    // Deferred: the modal markup is parsed after this script tag.
+    document.addEventListener('DOMContentLoaded', function () {
+      const backdrop = document.getElementById('fw-backdrop');
+      const windowEl = document.getElementById('fw-window');
+      const titleEl  = document.getElementById('fw-title');
+      const bodyEl   = document.getElementById('fw-body');
+      const closeBtn = document.getElementById('fw-close');
+      if (!backdrop) return;
+
+      let lastFocus = null;
+
+      const CONTENT = {
+        industrial: {
+          title: 'Industrial Design',
+          html: '<div class="fw-placeholder">Industrial Design — coming soon</div>'
+        },
+        editorial: {
+          title: 'Editorial HMUA',
+          html: '<div class="fw-placeholder">Editorial HMUA — coming soon</div>'
+        },
+        'mac-hd': {
+          title: 'About This Designer',
+          html: `<div class="fw-about">
+            <h3>Jadesola Sanusi</h3>
+            <dl>
+              <dt>Role</dt><dd>Product Designer</dd>
+              <dt>Currently</dt><dd>Goldman Sachs — alternative investments</dd>
+              <dt>Experience</dt><dd>3 years enterprise UX</dd>
+              <dt>Shipped</dt><dd>7 greenfield projects</dd>
+              <dt>Also</dt><dd>Editorial hair &amp; makeup · Industrial design</dd>
+              <dt>Made with</dt><dd>Hand-drawn doodles &amp; a lot of coffee</dd>
+            </dl>
+          </div>`
+        },
+        trash: {
+          title: 'Trash',
+          html: `<div class="fw-egg">
+            <span class="fw-egg__big">It's empty in here.</span>
+            No bad ideas were harmed in the making of this portfolio.<br>
+            (Well — maybe a few. They didn't make the cut.)
+          </div>`
+        }
+      };
+
+      function openWindow(key, trigger) {
+        const c = CONTENT[key];
+        if (!c) return;
+        lastFocus = trigger || document.activeElement;
+        titleEl.textContent = c.title;
+        bodyEl.innerHTML = c.html;
+        backdrop.classList.add('open');
+        backdrop.setAttribute('aria-hidden', 'false');
+        closeBtn.focus();
+        document.addEventListener('keydown', onKey);
+      }
+
+      function closeWindow() {
+        backdrop.classList.remove('open');
+        backdrop.setAttribute('aria-hidden', 'true');
+        document.removeEventListener('keydown', onKey);
+        if (lastFocus && lastFocus.focus) lastFocus.focus();
+      }
+
+      function onKey(e) {
+        if (e.key === 'Escape') { closeWindow(); return; }
+        if (e.key === 'Tab') {
+          // Trap focus inside the window
+          const focusables = windowEl.querySelectorAll('button, a[href], [tabindex]:not([tabindex="-1"])');
+          if (!focusables.length) return;
+          const first = focusables[0], last = focusables[focusables.length - 1];
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      }
+
+      closeBtn.addEventListener('click', closeWindow);
+      backdrop.addEventListener('click', e => { if (e.target === backdrop) closeWindow(); });
+
+      // ── Live clock over the baked date ──
+      (function(){
+        const el = document.getElementById('fb-livedate');
+        if (!el) return;
+        const fmt = new Intl.DateTimeFormat('en-GB', {
+          weekday: 'short', day: 'numeric', month: 'short',
+          hour: '2-digit', minute: '2-digit', hour12: false
+        });
+        const paint = () => {
+          const p = Object.fromEntries(fmt.formatToParts(new Date()).map(x => [x.type, x.value]));
+          el.textContent = `${p.weekday}, ${p.day} ${p.month} ${p.hour}:${p.minute}`;
+        };
+        paint();
+        const now = new Date();
+        const msToMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+        setTimeout(() => { paint(); setInterval(paint, 60000); }, msToMinute);
+      })();
+
+      // ── Desktop icons: draggable within the RHS zone; a click (no drag) opens ──
+      const icons = document.querySelectorAll('.desktop-icon');
+      const stage = document.querySelector('.desktop-icons');
+      icons.forEach(icon => {
+        const key = icon.dataset.icon;
+        let startX, startY, origLeft, origTop, moved = false, dragging = false;
+
+        function down(e) {
+          document.dispatchEvent(new Event('annot-icon-interacted'));
+          const pt = e.touches ? e.touches[0] : e;
+          dragging = true; moved = false;
+          startX = pt.clientX; startY = pt.clientY;
+          const s = stage.getBoundingClientRect(), r = icon.getBoundingClientRect();
+          origLeft = r.left - s.left; origTop = r.top - s.top;
+          // switch from % to px so dragging is smooth
+          icon.style.left = origLeft + 'px';
+          icon.style.top  = origTop + 'px';
+          icon.classList.add('dragging');
+          document.addEventListener('mousemove', move);
+          document.addEventListener('mouseup', up);
+          document.addEventListener('touchmove', move, { passive: false });
+          document.addEventListener('touchend', up);
+          if (e.cancelable) e.preventDefault();
+        }
+        function move(e) {
+          if (!dragging) return;
+          const pt = e.touches ? e.touches[0] : e;
+          const dx = pt.clientX - startX, dy = pt.clientY - startY;
+          if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
+          const s = stage.getBoundingClientRect();
+          let nl = origLeft + dx, nt = origTop + dy;
+          nl = Math.max(0, Math.min(nl, s.width  - icon.offsetWidth));   // clamp to RHS zone
+          nt = Math.max(0, Math.min(nt, s.height - icon.offsetHeight));
+          icon.style.left = nl + 'px'; icon.style.top = nt + 'px';
+          if (e.cancelable) e.preventDefault();
+        }
+        function up() {
+          dragging = false;
+          icon.classList.remove('dragging');
+          document.removeEventListener('mousemove', move);
+          document.removeEventListener('mouseup', up);
+          document.removeEventListener('touchmove', move);
+          document.removeEventListener('touchend', up);
+          if (!moved) { openWindow(key, icon); document.dispatchEvent(new Event('annot-icon-opened')); }   // treat as a click
+        }
+        icon.addEventListener('mousedown', down);
+        icon.addEventListener('touchstart', down, { passive: false });
+        icon.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openWindow(key, icon);
+            document.dispatchEvent(new Event('annot-icon-interacted'));
+            document.dispatchEvent(new Event('annot-icon-opened'));
+          }
+        });
+      });
+
+      // ── Apple-logo hotspot → About ──
+      const apple = document.getElementById('fb-apple');
+      if (apple) apple.addEventListener('click', () => openWindow('mac-hd', apple));
+
+      // ── Shrug Easter egg ──
+      const shrug = document.getElementById('fb-shrug');
+      if (shrug) {
+        const MSGS = ['¯\\_(ツ)_/¯', 'still here', 'why are you clicking me', 'go look at the work →', '¯\\_(ツ)_/¯'];
+        let i = 0;
+        shrug.addEventListener('click', () => {
+          i = (i + 1) % MSGS.length;
+          shrug.textContent = MSGS[i];
+          shrug.animate(
+            [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-6deg)' }, { transform: 'rotate(6deg)' }, { transform: 'rotate(0deg)' }],
+            { duration: 320, easing: 'ease-in-out' }
+          );
+        });
+      }
+
+      // ── Decorative annotations: first-visit only, max 2, fade on action ──
+      (function () {
+        const layer = document.getElementById('hero-annotations');
+        if (!layer) return;
+        if (localStorage.getItem('annotationsSeen')) return;   // returning visitor → clean
+        if (window.matchMedia('(max-width: 768px)').matches) return;
+
+        const get = (name) => layer.querySelector(`.annot--${name}`);
+        const shown = new Set();
+        let scrolled = false, iconOpened = false, iconTouched = false;
+
+        function fade(name) {
+          const el = get(name);
+          if (el) el.classList.remove('show');
+        }
+        function reveal() {
+          localStorage.setItem('annotationsSeen', '1');
+          // Priority: SCROLL, then FOLIOS, then CLICKABLE — max 2, skip if already actioned.
+          const order = [
+            { name: 'scroll',    done: () => scrolled },
+            { name: 'folios',    done: () => iconOpened },
+            { name: 'clickable', done: () => iconTouched },
+          ];
+          for (const a of order) {
+            if (shown.size >= 2) break;
+            if (a.done()) continue;
+            const el = get(a.name);
+            if (!el) continue;
+            el.classList.add('show');
+            shown.add(a.name);
+          }
+        }
+
+        // Fade-out triggers (also stop them appearing if fired before the reveal)
+        window.addEventListener('scroll', () => { scrolled = true; fade('scroll'); }, { passive: true });
+        document.addEventListener('annot-icon-opened',    () => { iconOpened = true; fade('folios'); });
+        document.addEventListener('annot-icon-interacted', () => { iconTouched = true; fade('clickable'); });
+
+        // Reveal after ~2.5s of being on the page
+        setTimeout(reveal, 2500);
+      })();
+
+      // ── Baked-toolbar hotspots → hand-drawn toast replies ──
+      const wrap = document.querySelector('.finder-bar__wrap');
+      if (wrap) {
+        const toast = document.createElement('div');
+        toast.className = 'fb-toast';
+        toast.setAttribute('role', 'status');
+        wrap.appendChild(toast);
+        let toastTimer = null, soundOn = true;
+        const fmt = new Intl.DateTimeFormat('en-GB', {
+          weekday: 'short', day: 'numeric', month: 'short',
+          hour: '2-digit', minute: '2-digit', hour12: false
+        });
+        const nowStr = () => {
+          const p = Object.fromEntries(fmt.formatToParts(new Date()).map(x => [x.type, x.value]));
+          return `${p.weekday}, ${p.day} ${p.month} ${p.hour}:${p.minute}`;
+        };
+        const MSG = {
+          shrug:   () => 'no notes ¯\\_(ツ)_/¯',
+          wifi:    () => 'connected — vibes are strong',
+          volume:  () => { soundOn = !soundOn; return soundOn ? 'sound: on' : 'sound: off'; },
+          battery: () => '100% — powered by coffee',
+          clock:   () => `right now: ${nowStr()}`,
+          search:  () => 'nothing to find here… yet',
+          menu:    () => 'menu coming soon',
+        };
+        wrap.querySelectorAll('.fb-spot[data-spot]').forEach(spot => {
+          spot.addEventListener('click', () => {
+            const fn = MSG[spot.dataset.spot];
+            if (!fn) return;
+            toast.textContent = fn();
+            // Center the toast under the clicked icon, clamped inside the bar
+            const center = spot.offsetLeft + spot.offsetWidth / 2;
+            toast.style.left = Math.min(Math.max(center, 110), wrap.clientWidth - 110) + 'px';
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+          });
+        });
+      }
+    });
   </script>
+
+  <!-- ============================================================
+       DESKTOP LAYER — reusable Finder window modal
+  ============================================================ -->
+  <div class="fw-backdrop" id="fw-backdrop" aria-hidden="true">
+    <div class="finder-window" id="fw-window" role="dialog" aria-modal="true" aria-labelledby="fw-title">
+      <div class="fw-titlebar">
+        <span class="fw-lights" aria-hidden="true">
+          <button class="fw-close" id="fw-close" aria-label="Close window"></button>
+          <span class="fw-light fw-light--amber"></span>
+          <span class="fw-light fw-light--green"></span>
+        </span>
+        <h2 class="fw-title" id="fw-title">Finder</h2>
+      </div>
+      <div class="fw-body" id="fw-body"></div>
+    </div>
+  </div>
 
 </body>
 </html>
