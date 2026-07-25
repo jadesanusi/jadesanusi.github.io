@@ -376,59 +376,6 @@
       transition: none;
     }
 
-    /* ── Decorative designer's annotations ── */
-    .hero-annotations {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;   /* never blocks clicks on icons/links beneath */
-      z-index: 3;
-    }
-    .annot {
-      position: absolute;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.7s ease;
-    }
-    .annot img {
-      display: block;
-      pointer-events: none;
-      -webkit-user-drag: none;
-      user-select: none;
-    }
-    .annot.show {
-      opacity: 1;
-      animation: annot-float 3.6s ease-in-out infinite;
-    }
-    @keyframes annot-float {
-      0%, 100% { transform: translateY(0); }
-      50%      { transform: translateY(-4px); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .annot.show { animation: none; }
-    }
-
-    /* SCROLL — lower-centre of hero, text above, arrow below pointing down */
-    .annot--scroll { left: 41%; bottom: 20px; align-items: flex-start; }
-    .annot--scroll .annot__text  { width: 150px; }
-    .annot--scroll .annot__arrow { width: 46px; margin-left: 40px; }
-
-    /* FOLIOS — below-left of the folder cluster, arrow up-right, text below */
-    .annot--folios { left: 60%; top: 54%; align-items: flex-start; }
-    .annot--folios .annot__arrow { width: 60px; transform: rotate(8deg); margin-left: 90px; }
-    .annot--folios .annot__text  { width: 200px; }
-
-    /* CLICKABLE — anchored below-left of the icon cluster (only if room) */
-    .annot--clickable { left: 63%; top: 30%; align-items: flex-start; }
-    .annot--clickable .annot__arrow { width: 58px; margin-left: 70px; }
-    .annot--clickable .annot__text  { width: 120px; }
-
-    @media (max-width: 768px) {
-      .hero-annotations { display: none; }
-    }
     /* Folder/disk icons share a native width (284px) → same width = same scale.
        Sized to the wireframe's ~93px icon slot (374/4). */
     .desktop-icon img {
@@ -1906,18 +1853,6 @@
         </div>
       </div>
 
-      <!-- Decorative designer's annotations (first-visit only, purely visual) -->
-      <div class="hero-annotations" id="hero-annotations" aria-hidden="true">
-        <div class="annot annot--scroll" data-annot="scroll">
-          <img class="annot__text"  src="assets/annotations/scroll-text.png"  alt="" />
-        </div>
-        <div class="annot annot--folios" data-annot="folios">
-          <img class="annot__text"  src="assets/annotations/folios-text.png"  alt="" />
-        </div>
-        <div class="annot annot--clickable" data-annot="clickable">
-          <img class="annot__text"  src="assets/annotations/clickable-text.png"  alt="" />
-        </div>
-      </div>
     </div>
 
     <!-- Work grid -->
@@ -2884,7 +2819,6 @@
         let startX, startY, origLeft, origTop, moved = false, dragging = false;
 
         function down(e) {
-          document.dispatchEvent(new Event('annot-icon-interacted'));
           const pt = e.touches ? e.touches[0] : e;
           dragging = true; moved = false;
           startX = pt.clientX; startY = pt.clientY;
@@ -2919,17 +2853,12 @@
           document.removeEventListener('mouseup', up);
           document.removeEventListener('touchmove', move);
           document.removeEventListener('touchend', up);
-          if (!moved) { openWindow(key, icon); document.dispatchEvent(new Event('annot-icon-opened')); }   // treat as a click
+          if (!moved) openWindow(key, icon);   // treat as a click
         }
         icon.addEventListener('mousedown', down);
         icon.addEventListener('touchstart', down, { passive: false });
         icon.addEventListener('keydown', e => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            openWindow(key, icon);
-            document.dispatchEvent(new Event('annot-icon-interacted'));
-            document.dispatchEvent(new Event('annot-icon-opened'));
-          }
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openWindow(key, icon); }
         });
       });
 
@@ -2951,48 +2880,6 @@
           );
         });
       }
-
-      // ── Decorative annotations: first-visit only, max 2, fade on action ──
-      (function () {
-        const layer = document.getElementById('hero-annotations');
-        if (!layer) return;
-        if (localStorage.getItem('annotationsSeen')) return;   // returning visitor → clean
-        if (window.matchMedia('(max-width: 768px)').matches) return;
-
-        const get = (name) => layer.querySelector(`.annot--${name}`);
-        const shown = new Set();
-        let scrolled = false, iconOpened = false, iconTouched = false;
-
-        function fade(name) {
-          const el = get(name);
-          if (el) el.classList.remove('show');
-        }
-        function reveal() {
-          localStorage.setItem('annotationsSeen', '1');
-          // Priority: SCROLL, then FOLIOS, then CLICKABLE — max 2, skip if already actioned.
-          const order = [
-            { name: 'scroll',    done: () => scrolled },
-            { name: 'folios',    done: () => iconOpened },
-            { name: 'clickable', done: () => iconTouched },
-          ];
-          for (const a of order) {
-            if (shown.size >= 2) break;
-            if (a.done()) continue;
-            const el = get(a.name);
-            if (!el) continue;
-            el.classList.add('show');
-            shown.add(a.name);
-          }
-        }
-
-        // Fade-out triggers (also stop them appearing if fired before the reveal)
-        window.addEventListener('scroll', () => { scrolled = true; fade('scroll'); }, { passive: true });
-        document.addEventListener('annot-icon-opened',    () => { iconOpened = true; fade('folios'); });
-        document.addEventListener('annot-icon-interacted', () => { iconTouched = true; fade('clickable'); });
-
-        // Reveal after ~2.5s of being on the page
-        setTimeout(reveal, 2500);
-      })();
 
       // ── Baked-toolbar hotspots → hand-drawn toast replies ──
       const wrap = document.querySelector('.finder-bar__wrap');
