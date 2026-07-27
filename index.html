@@ -87,6 +87,7 @@
     }
 
     body {
+      font-family: 'DM Sans', sans-serif;   /* brand base font — stops case-study text falling back to Times */
       font-size: 16px;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
@@ -1164,6 +1165,158 @@
       background: #ececec;
     }
 
+    /* ── Before / After tabbed component ── */
+    .ba {
+      margin: 24px 0;
+      border: 1px solid var(--ux-border);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      background: var(--ux-surface);
+    }
+    .ba__bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      background: #fafafa;
+      border-bottom: 1px solid var(--ux-border);
+    }
+    .ba__tabs {
+      display: inline-flex;
+      gap: 4px;
+      padding: 3px;
+      background: var(--ux-tag-bg);
+      border-radius: var(--radius-pill);
+      flex-shrink: 0;
+    }
+    .ba__tab {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      color: var(--ux-muted);
+      background: transparent;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 8px 16px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+    .ba__tab:hover { color: var(--ux-ink); }
+    .ba__tab.is-active {
+      color: #ffffff;
+      background: var(--ux-ink);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.18);
+    }
+    .ba__tab-sub { font-weight: 400; opacity: 0.72; }
+    .ba__tab:focus-visible { outline: 2px solid var(--ux-ink); outline-offset: 2px; }
+    .ba__summary {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--ux-muted);
+      text-align: right;
+      line-height: 1.4;
+    }
+    .ba__stage { padding: 24px; }
+    .ba__panel { display: none; }
+    .ba__panel.is-active {
+      display: block;
+      animation: ba-in 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes ba-in {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ba__panel.is-active { animation: none; }
+    }
+    .ba__fig { margin: 0; position: relative; }
+    .ba__state {
+      display: inline-block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 12px;
+    }
+    .ba__state--before { background: #f0e4e4; color: #9a5b5b; }
+    .ba__state--after  { background: #e4efe6; color: #4a7a55; }
+    .ba-shot {
+      width: 100%;
+      display: block;
+      border-radius: var(--radius-card);
+      border: 1px solid var(--ux-border);
+      background: var(--ux-surface);
+    }
+    /* "Old state" card when no before screengrab exists */
+    .ba-oldstate {
+      aspect-ratio: 16 / 9;
+      border: 1.5px dashed #d8c3c3;
+      border-radius: var(--radius-card);
+      background: linear-gradient(180deg, #faf4f4 0%, #f4ecec 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      gap: 10px;
+    }
+    .ba-oldstate__eyebrow {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #b08a8a;
+    }
+    .ba-oldstate__line {
+      font-size: clamp(16px, 2.4vw, 21px);
+      font-weight: 400;
+      line-height: 1.4;
+      color: #7a5b5b;
+      max-width: 34ch;
+      margin: 0;
+    }
+    .ba__cap {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--ux-muted);
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+    .ba-pills {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0 0;
+      padding: 0;
+    }
+    .ba-pill {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12.5px;
+      font-weight: 500;
+      line-height: 1.2;
+      padding: 7px 13px;
+      border-radius: var(--radius-pill);
+      border: 1px solid transparent;
+    }
+    .ba-pill--issue { background: #f7ecec; color: #9a5b5b; border-color: #ecdada; }
+    .ba-pill--win   { background: #e9f2eb; color: #43764f; border-color: #d5e6d9; }
+
+    @media (max-width: 640px) {
+      .ba__bar { flex-direction: column; align-items: stretch; gap: 10px; }
+      .ba__tabs { width: 100%; }
+      .ba__tab { flex: 1; text-align: center; }
+      .ba__summary { text-align: left; }
+      .ba__stage { padding: 16px; }
+    }
+
     .cs-meta-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -2146,9 +2299,13 @@
         approach: '[ Placeholder — describe your research approach, discovery findings, key design decisions, and iterations here. ]',
         outcome: '[ Placeholder — describe what shipped, adoption metrics, and any measured impact here. ]',
         beforeAfter: {
+          beforeTag: 'Excel', afterTag: 'CashRoll',
+          summary: 'Patchwork of Excel files, no single source of truth',
           beforeLabel: 'Manual Excel reconciliation',
+          beforeIssues: ['No single source of truth', 'Manual reconciliation — latency & error', 'No audit trail', 'Anomalies invisible at scale'],
           afterSrc: 'images/cashroll/01-default-view.png',
           afterLabel: 'The CashRoll data grid',
+          afterWins: ['One filterable transaction grid', 'Safe duplicate merging', 'Full audit trail', 'Inline editing in place'],
         },
         gallery: [
           { src: 'images/cashroll/01-default-view.png', caption: 'Default grid view — transaction data across fund families, with inline comments.' },
@@ -2176,9 +2333,13 @@
         approach: '[ Placeholder — describe your research approach, discovery findings, key design decisions, and iterations here. ]',
         outcome: '[ Placeholder — describe what shipped, adoption metrics, and any measured impact here. ]',
         beforeAfter: {
+          beforeTag: 'Excel', afterTag: 'Vela',
+          summary: 'Valuations in Excel, emailed for sign-off',
           beforeLabel: 'Excel spreadsheets emailed between teams',
+          beforeIssues: ['Emailed between teams', 'No single audit trail', 'No structured sign-off', 'No portfolio-wide visibility'],
           afterSrc: 'images/vela/01-default-view.png',
           afterLabel: 'Vela — portfolio marking view',
+          afterWins: ['End-to-end marking workflow', 'Structured approval chain', 'Live portfolio-wide editing'],
         },
         gallery: [
           { src: 'images/vela/01-default-view.png', caption: 'Default marking view — portfolio holdings across fund families with live editing.' },
@@ -2203,9 +2364,13 @@
         approach: '[ Placeholder — describe your research approach, discovery findings, key design decisions, and iterations here. ]',
         outcome: '[ Placeholder — describe what shipped, adoption metrics, and any measured impact here. ]',
         beforeAfter: {
+          beforeTag: 'Nothing', afterTag: 'Deal Terms',
+          summary: 'No prior system — notes, emails, ad-hoc sheets',
           beforeLabel: 'No prior system — deal terms captured in notes and emails',
+          beforeIssues: ['No system at all', 'Captured inconsistently', 'No structured data downstream'],
           afterSrc: 'images/deal-terms/01-landing.png',
           afterLabel: 'Deal Terms Capture — landing view',
+          afterWins: ['Structured capital-stack capture', 'Layered deal economics', 'Feeds Vela & reporting'],
         },
         gallery: [
           { src: 'images/deal-terms/01-landing.png', caption: 'Landing page — deal inventory with fund and status filters.' },
@@ -2231,9 +2396,13 @@
         approach: '[ Placeholder — describe your research approach, discovery findings, key design decisions, and iterations here. ]',
         outcome: '[ Placeholder — describe what shipped, adoption metrics, and any measured impact here. ]',
         beforeAfter: {
+          beforeTag: 'Email', afterTag: 'Dashboard',
+          summary: 'Email + manual invoice tracking, no record',
           beforeLabel: 'Email chains with no system of record',
+          beforeIssues: ['Email as coordination', 'No searchability', 'No status visibility', 'Informal exception handling'],
           afterSrc: 'images/insurance/01-validated-amounts.png',
           afterLabel: 'Insurance Matching Dashboard — reconciliation view',
+          afterWins: ['Shared system of record', 'Invoice reconciliation', 'Exception tagging & resolution'],
         },
         gallery: [
           { src: 'images/insurance/01-validated-amounts.png', caption: 'Validated amounts — surplus state with two matched invoices flagged.' },
@@ -2258,9 +2427,13 @@
         approach: '[ Placeholder — describe your research approach, discovery findings, key design decisions, and iterations here. ]',
         outcome: '[ Placeholder — describe what shipped, adoption metrics, and any measured impact here. ]',
         beforeAfter: {
+          beforeTag: 'Legacy', afterTag: 'Redesign',
+          summary: 'Unusable legacy platform, broken Orion',
           beforeLabel: 'Legacy platform — poor IA, broken Orion integration',
+          beforeIssues: ['Years of misaligned requirements', 'Users bypassed the system', 'Broken Orion integration', 'No reliable audit trail'],
           afterSrc: 'images/credit/01-empty-state.png',
           afterLabel: 'Credit Risk — agreement setup redesign',
+          afterWins: ['Clear information architecture', 'Orion integration restored', 'Full audit trail in practice'],
         },
         gallery: [
           { src: 'images/credit/01-empty-state.png', caption: 'Empty state — clear onboarding into the agreement setup flow.' },
@@ -2285,9 +2458,13 @@
         approach: '[ Placeholder — describe your research approach, discovery findings, key design decisions, and iterations here. ]',
         outcome: '[ Placeholder — describe what shipped, adoption metrics, and any measured impact here. ]',
         beforeAfter: {
+          beforeTag: 'Ad hoc', afterTag: 'FX Tool',
+          summary: 'Exposure tracked ad hoc, no consolidated view',
           beforeLabel: 'No consolidated FX view — exposure tracked ad hoc',
+          beforeIssues: ['No consolidated FX view', 'Exposure tracked ad hoc'],
           afterSrc: 'images/fx/01-equity-default.png',
           afterLabel: 'FX Risk Management Tool — equity exposure view',
+          afterWins: ['Exposure across fund families', 'Configurable pivot presets', 'Hedging-ratio visualisation'],
         },
         gallery: [
           { src: 'images/fx/01-equity-default.png', caption: 'Equity default screen — FX exposure by fund family with hedging ratio overlay.' },
@@ -2483,23 +2660,59 @@
     })();
 
     // ——— Case study visual renderers ————————————————————————————
-    // Before/after pair. `beforeSrc` optional — falls back to a placeholder
-    // so you can drop the "before" (e.g. Excel) screengrab in later.
+    // Before / After — a tabbed toggle. One container, two states, so the
+    // transformation reads at a glance instead of comparing two static shots.
     function renderBeforeAfter(data) {
       const ba = data.beforeAfter;
       if (!ba) return '';
-      const before = ba.beforeSrc
-        ? `<img class="cs-shot" src="${ba.beforeSrc}" loading="lazy" alt="${ba.beforeLabel || 'Before'}" />`
-        : `<div class="cs-shot cs-shot--ph">Insert "before" screengrab<br><span>${ba.beforeLabel || 'the old workflow'}</span></div>`;
-      const after = ba.afterSrc
-        ? `<img class="cs-shot" src="${ba.afterSrc}" loading="lazy" alt="${ba.afterLabel || 'After'}" />`
-        : `<div class="cs-shot cs-shot--ph">Insert "after" screen</div>`;
+      const pills = (arr, kind) => (arr && arr.length)
+        ? `<ul class="ba-pills ba-pills--${kind}">${arr.map(p => `<li class="ba-pill ba-pill--${kind}">${p}</li>`).join('')}</ul>`
+        : '';
+
+      // Before visual: real screengrab if supplied, else an intentional "old state" card.
+      const beforeVisual = ba.beforeSrc
+        ? `<img class="ba-shot" src="${ba.beforeSrc}" loading="lazy" alt="${ba.beforeLabel || 'Before'}" />`
+        : `<div class="ba-oldstate">
+             <span class="ba-oldstate__eyebrow">The old way</span>
+             <p class="ba-oldstate__line">${ba.beforeLabel || 'The previous workflow'}</p>
+           </div>`;
+
+      const afterVisual = ba.afterSrc
+        ? `<img class="ba-shot" src="${ba.afterSrc}" loading="lazy" alt="${ba.afterLabel || 'After'}" />`
+        : `<div class="ba-oldstate"><p class="ba-oldstate__line">${ba.afterLabel || 'The redesign'}</p></div>`;
+
+      const beforeTag = ba.beforeTag ? ` · ${ba.beforeTag}` : '';
+      const afterTag  = ba.afterTag  ? ` · ${ba.afterTag}`  : '';
+
       return `
         <div class="cs-section">
           <p class="cs-section-label">Before &amp; After</p>
-          <div class="cs-ba">
-            <figure class="cs-fig"><span class="cs-fig__tag cs-fig__tag--before">Before</span>${before}<figcaption>${ba.beforeLabel || ''}</figcaption></figure>
-            <figure class="cs-fig"><span class="cs-fig__tag cs-fig__tag--after">After</span>${after}<figcaption>${ba.afterLabel || ''}</figcaption></figure>
+          <div class="ba" data-ba>
+            <div class="ba__bar">
+              <div class="ba__tabs" role="tablist" aria-label="Before and after">
+                <button class="ba__tab is-active" role="tab" aria-selected="true" tabindex="0" data-ba-tab="before">Before<span class="ba__tab-sub">${beforeTag}</span></button>
+                <button class="ba__tab" role="tab" aria-selected="false" tabindex="-1" data-ba-tab="after">After<span class="ba__tab-sub">${afterTag}</span></button>
+              </div>
+              ${ba.summary ? `<p class="ba__summary">${ba.summary}</p>` : ''}
+            </div>
+            <div class="ba__stage">
+              <div class="ba__panel is-active" role="tabpanel" data-ba-panel="before" aria-label="Before">
+                <figure class="ba__fig">
+                  <span class="ba__state ba__state--before">Before</span>
+                  ${beforeVisual}
+                  ${ba.beforeLabel ? `<figcaption class="ba__cap">${ba.beforeLabel}</figcaption>` : ''}
+                </figure>
+                ${pills(ba.beforeIssues, 'issue')}
+              </div>
+              <div class="ba__panel" role="tabpanel" data-ba-panel="after" hidden aria-label="After">
+                <figure class="ba__fig">
+                  <span class="ba__state ba__state--after">After</span>
+                  ${afterVisual}
+                  ${ba.afterLabel ? `<figcaption class="ba__cap">${ba.afterLabel}</figcaption>` : ''}
+                </figure>
+                ${pills(ba.afterWins, 'win')}
+              </div>
+            </div>
           </div>
         </div>`;
     }
@@ -2610,6 +2823,45 @@
         document.body.style.overflow = '';
       }, 300);
     }
+
+    // ——— Before / After tab toggle (delegated — content is injected) ————
+    (function () {
+      const root = document.getElementById('case-study-content');
+      if (!root) return;
+
+      function activate(ba, which) {
+        ba.querySelectorAll('.ba__tab').forEach(t => {
+          const on = t.dataset.baTab === which;
+          t.classList.toggle('is-active', on);
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+          t.tabIndex = on ? 0 : -1;
+        });
+        ba.querySelectorAll('.ba__panel').forEach(p => {
+          const on = p.dataset.baPanel === which;
+          p.classList.toggle('is-active', on);
+          if (on) p.removeAttribute('hidden'); else p.setAttribute('hidden', '');
+        });
+      }
+
+      root.addEventListener('click', e => {
+        const tab = e.target.closest('.ba__tab');
+        if (!tab) return;
+        activate(tab.closest('.ba'), tab.dataset.baTab);
+      });
+
+      root.addEventListener('keydown', e => {
+        const tab = e.target.closest('.ba__tab');
+        if (!tab) return;
+        const tabs = [...tab.closest('.ba__tabs').querySelectorAll('.ba__tab')];
+        let i = tabs.indexOf(tab);
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); i = (i + 1) % tabs.length; }
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); i = (i - 1 + tabs.length) % tabs.length; }
+        else return;
+        const next = tabs[i];
+        activate(next.closest('.ba'), next.dataset.baTab);
+        next.focus();
+      });
+    })();
 
     // ——— Typewriter ————————————————————————————————————————————
     (function () {
