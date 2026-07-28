@@ -864,64 +864,6 @@
       transition: opacity 0.2s;
     }
 
-    /* ── "What's the password?" easter egg ── */
-    .pw-hint {
-      position: relative;
-      margin-top: 20px;
-      text-align: center;
-    }
-    .pw-hint__link {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px;
-      color: var(--ux-muted);
-      background: none;
-      border: none;
-      padding: 2px 4px;
-      cursor: pointer;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      transition: color 0.2s ease;
-    }
-    .pw-hint__link:hover { color: var(--ux-ink); }
-    .pw-hint__bubble {
-      position: absolute;
-      top: calc(100% + 12px);
-      left: 50%;
-      transform: translateX(-50%) translateY(4px);
-      width: max-content;
-      max-width: 280px;
-      background: #fdfdfb;
-      border: 2px solid #1a1a1a;
-      border-radius: 235px 15px 225px 15px / 15px 225px 15px 255px;
-      padding: 14px 18px;
-      font-family: 'Patrick Hand', cursive;   /* upright, matches the toolbar hand */
-      font-size: 18px;
-      font-weight: 400;
-      line-height: 1.3;
-      color: #1a1a1a;
-      text-align: center;
-      cursor: pointer;
-      opacity: 0;
-      transition: opacity 0.18s ease, transform 0.18s ease;
-      z-index: 60;
-    }
-    .pw-hint__bubble[hidden] { display: none; }
-    .pw-hint__bubble.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .pw-hint__bubble .pw-pw { font-weight: 700; }
-    .pw-hint__bubble .pw-note { display: block; margin-top: 4px; font-size: 15px; color: #8a8a8a; }
-    .pw-hint__bubble .pw-copied { display: block; margin-top: 6px; font-size: 14px; color: #2a9d5c; }
-    /* little tail pointing up to the link */
-    .pw-hint__bubble::before {
-      content: "";
-      position: absolute;
-      top: -9px; left: 50%;
-      transform: translateX(-50%) rotate(45deg);
-      width: 12px; height: 12px;
-      background: #fdfdfb;
-      border-left: 2px solid #1a1a1a;
-      border-top: 2px solid #1a1a1a;
-    }
-
     /* UX Case Study Modal / Overlay */
     .case-study-overlay {
       display: none;
@@ -1053,6 +995,17 @@
       line-height: 1.75;
       color: #3a3a3a;
       margin-bottom: 16px;
+    }
+    /* Authoring placeholder — a line for Jadesola to fill in her own words */
+    .cs-section p.cs-note {
+      font-style: italic;
+      color: #9a5b5b;
+      background: #f7ecec;
+      border-left: 3px solid #d8bcbc;
+      border-radius: 0 6px 6px 0;
+      padding: 12px 16px;
+      font-size: 15px;
+      line-height: 1.6;
     }
 
     .cs-img-placeholder {
@@ -1308,6 +1261,126 @@
     }
     .ba-pill--issue { background: #f7ecec; color: #9a5b5b; border-color: #ecdada; }
     .ba-pill--win   { background: #e9f2eb; color: #43764f; border-color: #d5e6d9; }
+
+    /* ── "System of spreadsheets" cluster (Cash Roll before panel) ── */
+    .ba-sheets { margin: 0; }
+    .ba-sheets__scatter {
+      position: relative;
+      height: 350px;
+      margin-bottom: 20px;
+    }
+    .ba-sheet {
+      position: absolute;
+      width: clamp(140px, 44%, 172px);
+      background: #fbf6f6;
+      border: 1px solid #ecdada;
+      border-radius: var(--radius-card);
+      box-shadow: 0 1px 2px rgba(154, 91, 91, 0.06);
+      transform: rotate(var(--r, 0deg));
+      transform-origin: center;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      z-index: var(--z, 1);
+    }
+    /* scattered offsets + individual rotations (none equal, alternating) */
+    .ba-sheet--1 { top: 2px;   left: 2%;  --r: -4deg; --z: 2; }
+    .ba-sheet--2 { top: 26px;  left: 33%; --r: 3deg;  --z: 3; }
+    .ba-sheet--3 { top: 90px;  left: 60%; --r: -2deg; --z: 2; }
+    .ba-sheet--4 { top: 150px; left: 10%; --r: 4deg;  --z: 4; }
+    .ba-sheet--5 { top: 178px; left: 42%; --r: -1deg; --z: 3; }
+    .ba-sheet:hover {
+      transform: rotate(0deg) translateY(-4px);
+      box-shadow: 0 8px 22px rgba(154, 91, 91, 0.20);
+      z-index: 20;
+    }
+    .ba-sheet__title {
+      display: flex; align-items: center; justify-content: space-between; gap: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px; font-weight: 600; color: #9a5b5b;
+      background: #f7ecec;
+      border-bottom: 1px solid #ecdada;
+      border-radius: calc(var(--radius-card) - 1px) calc(var(--radius-card) - 1px) 0 0;
+      padding: 5px 9px;
+    }
+    .ba-sheet__tabs { font-size: 9px; font-weight: 500; color: #bb8f8f; letter-spacing: 0.02em; white-space: nowrap; }
+    .ba-sheet__formula {
+      font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+      font-size: 10px; color: #a98686;
+      padding: 5px 9px;
+      background: #ffffff;
+      border-bottom: 1px solid #f2e8e8;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ba-sheet__cell {
+      height: 8px; margin: 6px 9px; border-radius: 2px;
+      background: #e7e1e1;
+    }
+    .ba-sheet__cell:nth-child(4) { width: 68%; }
+    .ba-sheet__cell:nth-child(5) { width: 86%; opacity: 0.7; }
+    .ba-sheet__tabbar {
+      display: flex; gap: 4px;
+      padding: 6px 9px 7px;
+      background: #faf5f5;
+      border-top: 1px solid #f2e8e8;
+      border-radius: 0 0 calc(var(--radius-card) - 1px) calc(var(--radius-card) - 1px);
+    }
+    .ba-sheet__tabstub {
+      width: 22px; height: 7px;
+      border-radius: 2px 2px 0 0;
+      background: #ecdada;
+    }
+    /* dashed connectors between the scattered workbooks */
+    .ba-sheet__connector {
+      position: absolute; height: 0;
+      border-top: 1.5px dashed #cba9a9;
+      z-index: 6; pointer-events: none;   /* above resting cards so the handoff label reads */
+    }
+    .ba-sheet__connector--1 { top: 58px;  left: 21%; width: 92px; transform: rotate(13deg); }
+    .ba-sheet__connector--2 { top: 118px; left: 51%; width: 86px; transform: rotate(23deg); }
+    .ba-sheet__connector--3 { top: 208px; left: 27%; width: 90px; transform: rotate(-9deg); }
+    .ba-sheet__handoff {
+      position: absolute; top: -21px; left: 50%; transform: translateX(-50%);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+      color: #9a5b5b; background: #f7ecec;
+      border: 1px solid #ecdada; border-radius: var(--radius-pill);
+      padding: 2px 9px; white-space: nowrap;
+    }
+    .ba-sheets__line {
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(15px, 2vw, 17px);
+      font-weight: 600;
+      line-height: 1.5;
+      color: var(--ux-ink);
+      max-width: 32em;
+      margin: 4px 0 0;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ba-sheet { transition: none; }
+      .ba-sheet:hover { transform: rotate(var(--r, 0deg)); box-shadow: 0 1px 2px rgba(154, 91, 91, 0.06); }
+    }
+    /* Below 768px: stack into a vertical list, drop rotations, arrows for connectors */
+    @media (max-width: 768px) {
+      .ba-sheets__scatter {
+        height: auto;
+        display: flex; flex-direction: column; gap: 30px;
+      }
+      .ba-sheet {
+        position: relative;
+        top: auto; left: auto;
+        width: 100%;
+        transform: none;
+      }
+      .ba-sheet:hover { transform: translateY(-2px); }
+      .ba-sheet__connector { display: none; }
+      .ba-sheet:not(:last-of-type)::after {
+        content: "↓";
+        position: absolute;
+        left: 50%; bottom: -24px;
+        transform: translateX(-50%);
+        font-size: 18px; line-height: 1;
+        color: #cba9a9;
+      }
+    }
 
     @media (max-width: 640px) {
       .ba__bar { flex-direction: column; align-items: stretch; gap: 10px; }
@@ -2143,12 +2216,6 @@
         <p class="pw-gate__error" id="pw-error" aria-live="polite"></p>
         <button class="pw-gate__btn" type="submit">Enter</button>
       </form>
-
-      <!-- Easter egg: understated "forgot password"-style link -->
-      <div class="pw-hint">
-        <button type="button" class="pw-hint__link" id="pw-hint-link" aria-expanded="false" aria-controls="pw-hint-bubble">What's the password?</button>
-        <div class="pw-hint__bubble" id="pw-hint-bubble" role="status" aria-live="polite" hidden></div>
-      </div>
     </div>
   </div>
 
@@ -2294,14 +2361,19 @@
           { label: 'Before',   value: 'Excel spreadsheets' },
           { label: 'Year',     value: '2023–2024' },
         ],
-        overview: 'The cash operations team managed daily transaction reconciliation across fund families using a patchwork of Excel files. Volumes were growing, errors were compounding, and the manual process couldn\'t scale. CashRoll is a bespoke transaction data grid built to replace it — filterable, auditable, and built around how the desk actually works.',
-        problem: 'Multiple analysts maintaining separate Excel files with no single source of truth. Manual reconciliation introduced latency and error. No audit trail. No way to surface anomalies at scale. The process was working by habit, not design.',
-        approach: '[ Placeholder — describe your research approach, discovery findings, key design decisions, and iterations here. ]',
-        outcome: '[ Placeholder — describe what shipped, adoption metrics, and any measured impact here. ]',
+        overview: `The cash operations desk reconciled transactions across fund families every day, and the work was scattered by design. Each fund had its own Excel file, so an analyst covering several funds had several files open at once, each holding around eight tabs. Finishing one day's reconciliation also meant moving through two or three separate systems in sequence. Volumes kept climbing. Errors compounded. The process was held together by the people who'd memorised it.`,
+        problem: `Reconciliation meant matching what the books said against what the bank reported. The two sides arrived in different shapes with no shared key, so every match was made by hand. The fragmentation stacked: one file per fund, roughly eight tabs per file, two or three more systems to pass through for a single cycle. Activity types were tagged manually. Currency and date handling was fragile enough that one value in the wrong column could quietly break a calculation, and nobody would know until it did. There was no audit trail. The process ran on habit, not design, and the knowledge lived in people rather than the system.`,
+        problemNote: `[ Your words — one line on what it actually felt like to do this job daily. The human cost. Say it how you'd say it to a friend. ]`,
+        approach: `I mapped the whole current-state workflow first, before proposing anything. Every file, every tab, every hop between systems. That alone changed things: a process nobody had ever written down became something the team could finally look at together. Then I broke it into stages — updating balances, categorising activity, resolving breaks, assigning dates. I worked out which parts genuinely needed a person's judgement and which were just repetition a system could own. I defined where investment and non-investment activity should each go, so the tool had a routing logic instead of one undifferentiated pile. And I drew a hard line between what shipped first and what could wait, so the desk got something real quickly instead of waiting on everything.`,
+        screensIntro: `Auto-categorisation that sorts most incoming activity on arrival, so analysts start from a mostly-done state instead of a blank grid. A matching view that compares both sides and surfaces only what doesn't line up, instead of hunting across tabs. An open-versus-matched split, so reconciled items leave the screen and the only thing in front of you is the work that's left. And a grouping layer that merges accounts sharing attributes, replacing cleanup people used to do by hand.`,
+        outcome: `Work that was spread across dozens of files, tabs, and systems now happens in one. What used to depend on one analyst's spreadsheet fluency became something anyone on the desk could pick up. Manual categorisation shrank to exception-handling. Reconciliation finally had an audit trail.`,
+        outcomeNote: `[ Your words + one real number — [% auto-categorised] · [daily cycle: before → after] · [volume a day] · [a line someone on the desk actually said]. ]`,
         beforeAfter: {
           beforeTag: 'Excel', afterTag: 'CashRoll',
-          summary: 'Patchwork of Excel files, no single source of truth',
+          summary: 'A fund per file, ~8 tabs each, 2–3 systems — now one tool',
+          intro: `Before: a fund per file, eight tabs a file, two or three systems around it, every match and category assigned by hand, every day. After: one tool that pulls both sides in, sorts the bulk of activity against a rules layer automatically, and puts only the genuine exceptions in front of a person.`,
           beforeLabel: 'Manual Excel reconciliation',
+          beforeSheets: true,
           beforeIssues: ['No single source of truth', 'Manual reconciliation — latency & error', 'No audit trail', 'Anomalies invisible at scale'],
           afterSrc: 'images/cashroll/01-default-view.png',
           afterLabel: 'The CashRoll data grid',
@@ -2494,7 +2566,7 @@
 
 
     // ——— Password gate ——————————————————————————————————————————
-    const PW = 'designgeek';
+    const PW = 'princessfigma1';
     let uxUnlocked = false;
 
     function showGate() {
@@ -2528,84 +2600,13 @@
       }
     }
 
-    // ——— "What's the password?" easter egg ——————————————————————
-    (function () {
-      const link   = document.getElementById('pw-hint-link');
-      const bubble = document.getElementById('pw-hint-bubble');
-      if (!link || !bubble) return;
-      let open = false, revealTimer = null;
-
-      const REVEAL = `It's: <span class="pw-pw">designgeek</span>` +
-                     `<span class="pw-note">(don't tell anyone. or do. I clearly don't mind.)</span>`;
-
-      function openBubble() {
-        clearTimeout(revealTimer);
-        bubble.hidden = false;
-        bubble.classList.remove('pw-copied-shown');
-        // a beat of reluctance, then the reveal
-        bubble.innerHTML = `<span>...fine.</span>`;
-        requestAnimationFrame(() => bubble.classList.add('show'));
-        revealTimer = setTimeout(() => { bubble.innerHTML = REVEAL; }, 600);
-        open = true;
-        link.setAttribute('aria-expanded', 'true');
-        document.addEventListener('keydown', onKey);
-        setTimeout(() => document.addEventListener('click', onOutside), 0);
-      }
-
-      function closeBubble() {
-        clearTimeout(revealTimer);
-        bubble.classList.remove('show');
-        setTimeout(() => { if (!open) bubble.hidden = true; }, 200);
-        open = false;
-        link.setAttribute('aria-expanded', 'false');
-        document.removeEventListener('keydown', onKey);
-        document.removeEventListener('click', onOutside);
-      }
-
-      function onKey(e) { if (e.key === 'Escape') closeBubble(); }
-      function onOutside(e) {
-        if (!bubble.contains(e.target) && e.target !== link) closeBubble();
-      }
-
-      link.addEventListener('click', (e) => {
-        e.stopPropagation();
-        open ? closeBubble() : openBubble();
-      });
-
-      // Clicking the bubble copies the password
-      bubble.addEventListener('click', (e) => {
-        e.stopPropagation();
-        // primary: async clipboard; fallback: execCommand for older/untrusted contexts
-        try { navigator.clipboard && navigator.clipboard.writeText('designgeek'); } catch (_) {}
-        try {
-          const ta = document.createElement('textarea');
-          ta.value = 'designgeek';
-          ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand('copy');
-          document.body.removeChild(ta);
-        } catch (_) {}
-        if (!bubble.querySelector('.pw-copied')) {
-          const c = document.createElement('span');
-          c.className = 'pw-copied';
-          c.textContent = 'copied!';
-          bubble.appendChild(c);
-        }
-      });
-    })();
-
     // ——— Tab switching ——————————————————————————————————————————
     const navThemes = { ux: 'nav--ux', hmu: 'nav--hmu', id: 'nav--id' };
     let currentSection = 'ux';
 
     function switchSection(id) {
       if (id === currentSection) return;
-      if (id === 'ux' && !uxUnlocked) {
-        showGate();
-        return;
-      }
-
+      if (id === 'ux' && !uxUnlocked) { showGate(); return; }
       doSwitch(id);
     }
 
@@ -2647,14 +2648,9 @@
       btn.addEventListener('click', () => switchSection(btn.dataset.section));
     });
 
-    // UX is the default section — treat it as locked on initial load too
-    // Hide UX content and show gate immediately
+    // UX is the default section — gated behind the password on load.
     (function() {
       const uxSection = document.getElementById('ux');
-      uxSection.classList.remove('active');
-      const hmuSection = document.getElementById('hmu');
-      // Default to H&MU as the visible section, show gate for UX
-      // Actually: show gate straight away over UX
       uxSection.classList.add('active');
       showGate();
     })();
@@ -2669,13 +2665,39 @@
         ? `<ul class="ba-pills ba-pills--${kind}">${arr.map(p => `<li class="ba-pill ba-pill--${kind}">${p}</li>`).join('')}</ul>`
         : '';
 
-      // Before visual: real screengrab if supplied, else an intentional "old state" card.
+      // Before visual: real screengrab if supplied, else the "system of spreadsheets"
+      // cluster (Cash Roll only, via beforeSheets), else an intentional "old state" card.
+      const sheetsCluster = () => {
+        const sheets = ['A', 'B', 'C', 'D', 'E'];
+        const formulas = ['=SUMIFS(…)', '=VLOOKUP(…)', '=INDEX(MATCH(…))', '=SUMIF(…)', '=IFERROR(…)'];
+        const cards = sheets.map((n, i) => `
+          <div class="ba-sheet ba-sheet--${i + 1}">
+            <div class="ba-sheet__title">Workbook ${n}<span class="ba-sheet__tabs">[X] tabs</span></div>
+            <div class="ba-sheet__formula" aria-hidden="true">${formulas[i]}</div>
+            <div class="ba-sheet__cell"></div>
+            <div class="ba-sheet__cell"></div>
+            <div class="ba-sheet__cell"></div>
+            <div class="ba-sheet__tabbar"><span class="ba-sheet__tabstub"></span><span class="ba-sheet__tabstub"></span><span class="ba-sheet__tabstub"></span><span class="ba-sheet__tabstub"></span></div>
+          </div>`).join('');
+        return `
+          <div class="ba-sheets" aria-hidden="true">
+            <div class="ba-sheets__scatter">
+              ${cards}
+              <span class="ba-sheet__connector ba-sheet__connector--1"><span class="ba-sheet__handoff">manual handoff</span></span>
+              <span class="ba-sheet__connector ba-sheet__connector--2"></span>
+              <span class="ba-sheet__connector ba-sheet__connector--3"></span>
+            </div>
+            <p class="ba-sheets__line">The complexity wasn't in one spreadsheet. It was in the system of spreadsheets.</p>
+          </div>`;
+      };
       const beforeVisual = ba.beforeSrc
         ? `<img class="ba-shot" src="${ba.beforeSrc}" loading="lazy" alt="${ba.beforeLabel || 'Before'}" />`
-        : `<div class="ba-oldstate">
-             <span class="ba-oldstate__eyebrow">The old way</span>
-             <p class="ba-oldstate__line">${ba.beforeLabel || 'The previous workflow'}</p>
-           </div>`;
+        : ba.beforeSheets
+          ? sheetsCluster()
+          : `<div class="ba-oldstate">
+               <span class="ba-oldstate__eyebrow">The old way</span>
+               <p class="ba-oldstate__line">${ba.beforeLabel || 'The previous workflow'}</p>
+             </div>`;
 
       const afterVisual = ba.afterSrc
         ? `<img class="ba-shot" src="${ba.afterSrc}" loading="lazy" alt="${ba.afterLabel || 'After'}" />`
@@ -2686,7 +2708,8 @@
 
       return `
         <div class="cs-section">
-          <p class="cs-section-label">Before &amp; After</p>
+          <p class="cs-section-label">The transformation</p>
+          ${ba.intro ? `<p>${ba.intro}</p>` : ''}
           <div class="ba" data-ba>
             <div class="ba__bar">
               <div class="ba__tabs" role="tablist" aria-label="Before and after">
@@ -2773,32 +2796,35 @@
         </div>
 
         <div class="cs-section">
-          <p class="cs-section-label">Overview</p>
+          <p class="cs-section-label">The complexity I inherited</p>
           <p>${data.overview}</p>
         </div>
 
         <div class="cs-section">
-          <p class="cs-section-label">The Problem</p>
+          <p class="cs-section-label">Why it was difficult</p>
           <p>${data.problem}</p>
+          ${data.problemNote ? `<p class="cs-note">${data.problemNote}</p>` : ''}
         </div>
 
         <div class="cs-section">
-          <p class="cs-section-label">My Approach</p>
+          <p class="cs-section-label">How I made sense of it</p>
           <p>${data.approach}</p>
         </div>
 
         ${renderBeforeAfter(data)}
 
         <div class="cs-section">
-          <p class="cs-section-label">Key Screens</p>
+          <p class="cs-section-label">The system I built</p>
+          ${data.screensIntro ? `<p>${data.screensIntro}</p>` : ''}
           ${renderGallery(data)}
         </div>
 
         ${renderWalkthrough(data)}
 
         <div class="cs-section">
-          <p class="cs-section-label">Outcome</p>
+          <p class="cs-section-label">What changed</p>
           <p>${data.outcome}</p>
+          ${data.outcomeNote ? `<p class="cs-note">${data.outcomeNote}</p>` : ''}
         </div>
       `;
 
