@@ -507,9 +507,38 @@
       margin-bottom: 12px;
     }
 
+    /* ── Hand-drawn intro annotations ── */
+    .hero-annotations {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;   /* purely decorative — never blocks clicks */
+      z-index: 4;
+      overflow: visible;
+    }
+    .hann {
+      position: absolute;
+      display: block;
+      height: auto;
+      opacity: 0;
+      transition: opacity 0.8s ease;   /* direction lives in each element's transform */
+      mix-blend-mode: multiply;        /* drops the JPG white bg, keeps the coloured ink */
+    }
+    .hann.show { opacity: 1; }
+
+    /* group 1 — teal "the icons are all interactive" (upper, points up-right at the icons) */
+    .hann--icons-label { top: 3%;  left: 49%;  width: 176px; }
+    .hann--icons-arrow { top: 6%;  left: 60%;  width: 72px;  transform: rotate(38deg); }
+    /* group 2 — lime "click to view extracurricular projects" (right, points up-right at folders) */
+    .hann--extra-label { top: 44%; right: 5%;  width: 205px; }
+    .hann--extra-arrow { top: 22%; right: 11%; width: 96px;  transform: rotate(-4deg); }
+    /* group 3 — pink "scroll to selected projects" (lower centre; arrow flipped to point DOWN at Selected Work) */
+    .hann--scroll-label { top: 66%; left: 43%; width: 176px; }
+    .hann--scroll-arrow { top: 62%; left: 32%; width: 70px;  transform: scaleY(-1) rotate(8deg); }
+
     /* ── Responsive — hide desktop layer where it can't fit ── */
     @media (max-width: 1024px) {
       .desktop-icons { display: none; }
+      .hero-annotations { display: none; }
     }
     @media (max-width: 640px) {
       /* Bar gets too thin to read — hide it entirely; icons already hidden at 900px */
@@ -772,20 +801,27 @@
 
     .pw-gate__inner {
       width: 100%;
-      max-width: 380px;
+      max-width: 700px;
       padding: 0 24px;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .pw-gate__label {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--ux-muted);
-      margin-bottom: 32px;
+    .pw-gate__logo {
+      display: block;
+      width: 100%;
+      max-width: 666px;   /* 320 × 1.3 × 1.6 */
+      height: auto;
+      margin: 0 auto 28px;
+      /* the ink sits 2.26% right of the JPG's centre — nudge left so its true
+         visual centre lines up with the centred "It's private." text */
+      transform: translateX(-2.26%);
+      mix-blend-mode: multiply;   /* drops the JPG's white bg on any light surface */
     }
+    /* keep the form + copy a readable width even though the panel is wide for the logo */
+    .pw-gate__title, .pw-gate__sub, .pw-gate__form { width: 100%; max-width: 392px; }
 
     .pw-gate__title {
       font-family: 'DM Sans', sans-serif;
@@ -2079,6 +2115,16 @@
         </div>
       </div>
 
+      <!-- Hand-drawn intro annotations — fade in one-by-one after unlock -->
+      <div class="hero-annotations" id="hero-annotations" aria-hidden="true">
+        <img class="hann hann--icons-arrow"  src="assets/annotations/ann-icons-arrow.jpg"  alt="" data-ann="1" onerror="this.style.display='none'">
+        <img class="hann hann--icons-label"  src="assets/annotations/ann-icons-label.jpg"  alt="" data-ann="1" onerror="this.style.display='none'">
+        <img class="hann hann--extra-arrow"  src="assets/annotations/ann-extra-arrow.jpg"  alt="" data-ann="2" onerror="this.style.display='none'">
+        <img class="hann hann--extra-label"  src="assets/annotations/ann-extra-label.jpg"  alt="" data-ann="2" onerror="this.style.display='none'">
+        <img class="hann hann--scroll-arrow" src="assets/annotations/ann-scroll-arrow.jpg" alt="" data-ann="3" onerror="this.style.display='none'">
+        <img class="hann hann--scroll-label" src="assets/annotations/ann-scroll-label.jpg" alt="" data-ann="3" onerror="this.style.display='none'">
+      </div>
+
     </div>
 
     <!-- Work grid -->
@@ -2208,8 +2254,8 @@
   ============================================================ -->
   <div id="pw-gate" class="pw-gate" role="dialog" aria-modal="true" aria-label="Password protected">
     <div class="pw-gate__inner">
-      <p class="pw-gate__label">UX Design — Case Studies</p>
-      <h2 class="pw-gate__title">This section is private.</h2>
+      <img class="pw-gate__logo" src="assets/gate-title.jpg" alt="Hi, This is Jadesola's portfolio" />
+      <h2 class="pw-gate__title">It's private.</h2>
       <p class="pw-gate__sub">Enter the password to view.</p>
       <form class="pw-gate__form" onsubmit="checkPassword(event)">
         <input id="pw-input" class="pw-gate__input" type="password" placeholder="password" autocomplete="off" />
@@ -2390,7 +2436,7 @@
       vela: {
         label: 'Portfolio Valuation Platform · Codename: Vela',
         title: 'Portfolio Valuation Platform',
-        subtitle: 'A valuation and marking tool for private equity portfolios with approval workflows.',
+        subtitle: 'A quarterly valuation and marking platform across Private Credit, Real Estate and Private Equity, with structured approvals.',
         figma: 'https://www.figma.com/design/TulzjRqLfMYvzUOeLhRc8Z/Portfolio-UX?node-id=122-615591',
         meta: [
           { label: 'Client',   value: 'A global investment bank' },
@@ -2400,18 +2446,22 @@
           { label: 'Before',   value: 'Excel spreadsheets' },
           { label: 'Year',     value: '2023' },
         ],
-        overview: 'Private equity valuations require quarterly marking of portfolio holdings — a process that involves multiple stakeholders, approval chains, and strict audit requirements. Vela is the platform built to own that workflow end-to-end.',
-        problem: 'Valuations were being managed in Excel, emailed between teams, and manually tracked for approvals. The process had no single audit trail, no structured sign-off mechanism, and no visibility across the portfolio at once.',
-        approach: '[ Placeholder — describe your research approach, discovery findings, key design decisions, and iterations here. ]',
-        outcome: '[ Placeholder — describe what shipped, adoption metrics, and any measured impact here. ]',
+        overview: `Every quarter, valuation teams across Private Credit, Real Estate and Private Equity had to decide whether the companies in their portfolios should be marked up, down, or held, based on how each had performed.</p><p>A valuation platform already existed. Almost nobody trusted it enough to work in it. Analysts kept Excel open beside the application the entire time, re-checking its figures, redoing its calculations, tracking the things they couldn't find inside it. Making a single valuation meant bouncing between pages, spreadsheets and side tools before anyone felt sure enough to put a number down.</p><p>The platform stored the data. The actual work happened somewhere else.`,
+        problem: `Every valuation carried financial and regulatory weight, so being right mattered far more than being fast.</p><p>The information you needed to price a company was scattered across the platform, so users assembled performance data, evidence and history themselves, then checked it against Excel before trusting it. Pricing itself was worse than scattered — it disagreed with itself. The same position could be funded from up to three different sources, each carrying its own price, and those prices rarely matched. Someone had to reconcile them by hand into one number they could defend.</p><p>And it all had to work across three businesses. Private Credit, Real Estate and Private Equity each valued things a little differently, but none of them wanted to feel like they were using a different product.`,
+        problemNote: `[ Your words — land the emotional line in your voice. Something like: "it felt less like valuing a business and more like proving the system was right before you were allowed to trust yourself." Make sure it sounds like you said it. ]`,
+        approach: `Before designing anything, I mapped the valuation process end to end. I wasn't just after what people did. I wanted to know why they kept leaving the platform to finish their work.</p><p>That surfaced the real problem. It wasn't missing features. It was missing confidence.</p><p>So I stopped designing around pages and datasets and redesigned around the decision itself. I pulled the things people needed — performance, assumptions, evidence, history, workflow status — into one valuation workspace, so the answer could be reached in the place that held the question. For the three-source pricing mess, I designed a way to bring the competing prices together and resolve them to a single agreed mark, instead of leaving analysts to referee it in a spreadsheet. And I built one framework flexible enough to flex across all three businesses without splintering into three products.`,
+        screensIntro: `Everything centres on the valuation decision.</p><p>Rather than hunting across screens, users see portfolio performance, assumptions, supporting metrics and history in one place. A side panel holds the evidence behind each mark. Where a position is priced from multiple sources, the competing figures are surfaced together and resolved to one number instead of buried in a spreadsheet. Structured workflows carry a valuation from analysis through to approval without dropping context along the way.</p><p>The same system runs across Private Credit, Real Estate and Private Equity, adapting to each team's method without becoming three separate products. It also runs on mobile, because approvers needed to review and sign off in time, not just when they were back at a desk.`,
+        outcome: `Valuation stopped being a pile of disconnected tasks and became one connected workflow.</p><p>Confidence moved into the platform. The context, evidence and pricing people needed to understand a valuation, justify it and act on it finally sat in one place — instead of being rebuilt from scratch in Excel every quarter.`,
+        outcomeNote: `[ Your words + a number if you have one — [% of valuations completed without leaving the platform] · [Excel dependency before → after] · [approval turnaround] · or a line an analyst actually said. ]`,
         beforeAfter: {
           beforeTag: 'Excel', afterTag: 'Vela',
-          summary: 'Valuations in Excel, emailed for sign-off',
-          beforeLabel: 'Excel spreadsheets emailed between teams',
-          beforeIssues: ['Emailed between teams', 'No single audit trail', 'No structured sign-off', 'No portfolio-wide visibility'],
+          summary: 'The platform stored the data. The work happened in Excel.',
+          intro: `Before, analysts assembled a valuation across pages, spreadsheets and systems before they could trust it.</p><p>After, they worked in one space built around the decision — context, evidence, pricing and workflow in a single view, on desktop for the analysts doing the marking and on mobile for the approvers signing off away from their desks.`,
+          beforeLabel: 'Excel open beside the platform, every valuation',
+          beforeIssues: ['Nobody trusted the platform', 'Excel open the whole time', 'Three pricing sources that disagreed', 'Data scattered across pages'],
           afterSrc: 'images/vela/01-default-view.png',
-          afterLabel: 'Vela — portfolio marking view',
-          afterWins: ['End-to-end marking workflow', 'Structured approval chain', 'Live portfolio-wide editing'],
+          afterLabel: 'Vela — one valuation workspace',
+          afterWins: ['One workspace around the decision', 'Three prices resolved to one mark', 'Works across all three businesses', 'Desktop marking + mobile approvals'],
         },
         gallery: [
           { src: 'images/vela/01-default-view.png', caption: 'Default marking view — portfolio holdings across fund families with live editing.' },
@@ -2421,28 +2471,32 @@
       'deal-terms': {
         label: 'Deal Terms Capture',
         title: 'Deal Terms Capture',
-        subtitle: 'A standalone platform for structuring capital stacks and capturing deal terms.',
+        subtitle: 'A platform for capturing and managing the commercial terms behind private equity investments.',
         figma: 'https://www.figma.com/design/TulzjRqLfMYvzUOeLhRc8Z/Portfolio-UX?node-id=117-615589',
         meta: [
           { label: 'Client',   value: 'A global investment bank' },
           { label: 'Role',     value: 'Lead UX Designer' },
           { label: 'Status',   value: 'Shipped' },
-          { label: 'Type',     value: 'Greenfield · Enterprise · Complex forms' },
-          { label: 'Before',   value: 'No prior system' },
+          { label: 'Type',     value: 'Greenfield · Enterprise' },
+          { label: 'Before',   value: 'LPAs, PPMs & legal documentation' },
           { label: 'Year',     value: '2024' },
         ],
-        overview: 'Deal Terms Capture was carved out from the Vela equity scope when it became clear that the complexity of structuring capital stacks warranted its own standalone tool. It handles the capture of layered deal economics — equity, debt, preferred returns — and feeds downstream valuation and reporting systems.',
-        problem: 'There was no system. Deal terms were captured inconsistently across notes, emails, and ad-hoc spreadsheets. Downstream teams working in Vela had no reliable structured data to work from.',
-        approach: '[ Placeholder — describe your research approach, discovery findings, key design decisions, and iterations here. ]',
-        outcome: '[ Placeholder — describe what shipped, adoption metrics, and any measured impact here. ]',
+        overview: `This project started inside Vela.</p><p>Originally, the equity workflow only needed to support valuation decisions—marking portfolio companies up, down or holding their value. But as we worked with deal teams, another need kept surfacing. Before they could value an investment, they first had to understand and maintain the commercial terms behind it.</p><p>Those terms lived almost entirely inside LPAs, PPMs and other legal documentation. Users spent their time digging through dense agreements to understand capital structures, waterfall mechanics, security rights and ownership before they could make changes elsewhere.</p><p>What began as a feature request quickly became something much bigger.`,
+        problem: `Private equity investments are rarely straightforward.</p><p>A single deal can include multiple securities, different commitment amounts, liquidation preferences, conversion rights, PIK coupons, profit participation rules and complex waterfall structures. Those relationships determine how value flows through an investment, and even a small change can affect the rest of the capital stack.</p><p>The challenge wasn't digitising legal documents. It was translating them into something people could actually understand, maintain and trust.</p><p>The information existed. It was just buried inside hundreds of pages of legal documentation.`,
+        strategyLabel: 'A strategy decision before a design decision',
+        strategy: `Before designing the interface, we had to answer a more important question:</p><p>Should this exist inside Vela at all?</p><p>Discovery revealed that deal management wasn't an extension of valuation—it was a distinct workflow with different users, goals and mental models.</p><p>By mapping those workflows, I identified a natural boundary between valuation and deal management. I helped define the product strategy by separating the two, turning what started as a feature into a standalone platform with its own workflows, information architecture and roadmap.</p><p>That decision gave us two focused products instead of one increasingly complex one, and laid the foundation for future equity workflows.`,
+        approach: `With the product boundary established, the next challenge was making an incredibly dense domain feel manageable.</p><p>I organised the experience around the investment itself rather than the underlying data model. Users always begin with the cap stack and overall investment structure before moving into progressively more detailed information.</p><p>Instead of exposing every legal concept at once, I used progressive disclosure to reveal advanced sections—like liquidation preferences, conversion rights, waterfall mechanics and profit participation—only when they became relevant. The goal wasn't to hide complexity. It was to make it navigable.</p><p>That meant experienced users still had access to every detail they needed, while newer users could build a mental model without feeling overwhelmed.`,
+        screensIntro: `A dedicated workspace for managing the commercial structure of private equity investments.</p><p>Users can view the complete capital stack, manage securities, update commitments, configure waterfall structures and maintain the economic rights attached to each investment without referring back to legal documentation.</p><p>The interface keeps the investment hierarchy visible at all times while progressively revealing more specialised concepts only when they're needed. Rather than overwhelming users with every possible field, the platform guides them through increasingly detailed layers of the deal while preserving the flexibility expert users expect.`,
+        outcome: `Deal terms stopped being something users interpreted from documents and became something they could actively manage.</p><p>Separating deal management from valuation gave each product a clear purpose. Vela became the place where investment decisions were made. Deal Terms Capture became the source of truth for the legal and commercial structure behind those decisions.`,
         beforeAfter: {
-          beforeTag: 'Nothing', afterTag: 'Deal Terms',
-          summary: 'No prior system — notes, emails, ad-hoc sheets',
-          beforeLabel: 'No prior system — deal terms captured in notes and emails',
-          beforeIssues: ['No system at all', 'Captured inconsistently', 'No structured data downstream'],
+          beforeTag: 'Legal docs', afterTag: 'Deal Terms',
+          summary: 'Static legal agreements → a living model of the investment.',
+          intro: `Before, deal terms were scattered across LPAs, PPMs and supporting legal documents, making even simple updates dependent on manually interpreting contracts.</p><p>After, users had a dedicated platform that translated those agreements into a structured, interactive model of the investment—bringing securities, commitments, economic rights and waterfall mechanics together in one place.`,
+          beforeLabel: 'Terms buried in LPAs, PPMs and legal documentation',
+          beforeIssues: ['Terms buried in LPAs & PPMs', 'Every update meant reading contracts', 'Complex, interlocking capital stacks', 'No structured source of truth'],
           afterSrc: 'images/deal-terms/01-landing.png',
-          afterLabel: 'Deal Terms Capture — landing view',
-          afterWins: ['Structured capital-stack capture', 'Layered deal economics', 'Feeds Vela & reporting'],
+          afterLabel: 'Deal Terms Capture — a living model of the investment',
+          afterWins: ['A living model of the investment', 'Cap stack, securities & waterfalls in one place', 'Progressive disclosure of complexity', 'Its own product, separate from Vela'],
         },
         gallery: [
           { src: 'images/deal-terms/01-landing.png', caption: 'Landing page — deal inventory with fund and status filters.' },
@@ -2592,12 +2646,32 @@
         requestAnimationFrame(() => requestAnimationFrame(() => {
           document.getElementById('ux').classList.add('visible');
         }));
+        revealAnnotations();
       } else {
         input.classList.add('error');
         error.textContent = 'Wrong password. Try again.';
         input.value = '';
         setTimeout(() => input.classList.remove('error'), 400);
       }
+    }
+
+    // Intro annotations: fade in one-by-one (~2s apart) after a successful unlock,
+    // then once all are showing, fade them all away together after 3s.
+    let annotationsShown = false;
+    function revealAnnotations() {
+      if (annotationsShown) return;
+      if (window.matchMedia('(max-width: 1024px)').matches) return;   // desktop only
+      annotationsShown = true;
+      const inDelay = 1000, step = 2000;
+      [1, 2, 3].forEach((g, i) => {
+        setTimeout(() => {
+          document.querySelectorAll(`.hann[data-ann="${g}"]`).forEach(el => el.classList.add('show'));
+        }, inDelay + i * step);
+      });
+      // all three are up at inDelay + 2*step; hold 3s, then fade out together
+      setTimeout(() => {
+        document.querySelectorAll('.hann').forEach(el => el.classList.remove('show'));
+      }, inDelay + 2 * step + 3000);
     }
 
     // ——— Tab switching ——————————————————————————————————————————
@@ -2806,6 +2880,12 @@
           ${data.problemNote ? `<p class="cs-note">${data.problemNote}</p>` : ''}
         </div>
 
+        ${data.strategy ? `
+        <div class="cs-section">
+          <p class="cs-section-label">${data.strategyLabel || 'A strategy decision before a design decision'}</p>
+          <p>${data.strategy}</p>
+        </div>` : ''}
+
         <div class="cs-section">
           <p class="cs-section-label">How I made sense of it</p>
           <p>${data.approach}</p>
@@ -2892,18 +2972,18 @@
     // ——— Typewriter ————————————————————————————————————————————
     (function () {
       const PHRASES   = ['messy systems.', 'ambiguous problems.', 'constant change.', "what doesn't fit.", "what's next."];
-      const COLORS    = ['#3BF1D6', '#7AFE8E', '#FF6A9C', '#FF6F61', '#C643E0', '#FFF36A', '#5768FF'];
+      const COLORS    = ['#3BF1D6', '#7AFE8E', '#FF6A9C', '#FF6F61', '#DDD719', '#C643E0', '#FFF36A', '#5768FF'];
       const TYPE_MS   = 65, DELETE_MS = 35, HOLD_MS = 1800, PAUSE_MS = 300;
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       const phraseEl  = document.getElementById('tw-phrase');
       const cursorEl  = document.getElementById('tw-cursor');
       if (!phraseEl) return;
-      // Faint black outline only for the pale yellow, to keep it WCAG-legible
-      const YELLOW = '#FFF36A';
+      // Faint black outline only for the pale yellows, to keep them WCAG-legible
+      const PALE = ['#FFF36A', '#DDD719'];
       const applyColor = (hex) => {
         phraseEl.style.color = hex;
         if (cursorEl) cursorEl.style.background = hex;
-        phraseEl.style.webkitTextStroke = (hex.toUpperCase() === YELLOW)
+        phraseEl.style.webkitTextStroke = PALE.includes(hex.toUpperCase())
           ? '0.2px rgba(0,0,0,0.55)'
           : '0';
       };
@@ -3119,7 +3199,8 @@
           if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
           const s = stage.getBoundingClientRect();
           let nl = origLeft + dx, nt = origTop + dy;
-          nl = Math.max(0, Math.min(nl, s.width  - icon.offsetWidth));   // clamp to RHS zone
+          const minL = 20 - s.left;   // allow dragging all the way to ~20px from the viewport's left edge
+          nl = Math.max(minL, Math.min(nl, s.width  - icon.offsetWidth));
           nt = Math.max(0, Math.min(nt, s.height - icon.offsetHeight));
           icon.style.left = nl + 'px'; icon.style.top = nt + 'px';
           if (e.cancelable) e.preventDefault();
