@@ -691,38 +691,65 @@
     }
 
     .ux-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 24px;
-      grid-auto-rows: 1fr;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
 
     .project-card {
-      background: var(--ux-surface);
-      padding: 32px;
-      cursor: pointer;
-      transition: background 0.2s ease;
-      border: 1px solid var(--ux-border);
-      margin: -1px 0 0 -1px;
       display: flex;
-      flex-direction: column;
-    }
-
-    .project-card__desc {
-      flex: 1;
+      flex-direction: row;
+      align-items: stretch;
+      gap: 28px;
+      background: var(--ux-surface);
+      padding: 16px 22px;
+      cursor: pointer;
+      /* hand-drawn doodle frame (keeps crisp wobbly corners, stretches the edges) */
+      border: 16px solid transparent;
+      border-image: url("assets/card-frame.png") 60 fill / 16px / 0 stretch;
+      transition: transform 0.2s ease, filter 0.2s ease;
     }
 
     .project-card:hover {
-      background: #f0f0f0;
-      z-index: 1;
+      transform: translateY(-3px);
+      filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.10));
     }
+
+    .project-card__media {
+      flex: 0 0 clamp(200px, 30%, 320px);
+      align-self: stretch;
+      min-height: 156px;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #f1f1f1;
+      border: 1px solid var(--ux-border);
+    }
+    .project-card__media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+      transition: transform 0.35s ease;
+    }
+    .project-card:hover .project-card__media img { transform: scale(1.03); }
+    .project-card.no-media .project-card__media { display: none; }
+
+    .project-card__body {
+      flex: 1 1 auto;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 4px 4px 4px 0;
+    }
+    .project-card__desc { flex: 1; }
 
     .project-card__num {
       font-size: 11px;
       font-weight: 500;
       letter-spacing: 0.1em;
       color: var(--ux-muted);
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
     .project-card__title {
@@ -1042,6 +1069,27 @@
       padding: 12px 16px;
       font-size: 15px;
       line-height: 1.6;
+    }
+
+    /* Evidence strip — scannable proof chips */
+    .cs-evidence {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 4px 0 0;
+      padding: 0;
+    }
+    .cs-evidence__item {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ux-ink);
+      line-height: 1.35;
+      padding: 10px 14px;
+      border: 1px solid var(--ux-border);
+      border-radius: var(--radius-card);
+      background: #fafafa;
     }
 
     .cs-img-placeholder {
@@ -1976,9 +2024,15 @@
       }
 
       .project-card {
-        margin: 0;
-        border-width: 0 0 1px 0;
-        border-radius: 0;
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px;
+      }
+      .project-card__media {
+        flex: 0 0 auto;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        min-height: 0;
       }
 
       .ux-about__inner {
@@ -2137,67 +2191,92 @@
 
           <!-- 01 — Cash Management -->
           <div class="project-card" data-id="cashroll" onclick="openCaseStudy('cashroll')">
-            <p class="project-card__num">01</p>
-            <h2 class="project-card__title">Cash Management Tool</h2>
-            <p class="project-card__desc">A transaction data grid replacing manual Excel workflows for cash operations.</p>
-            <div class="project-card__tags">
-              <span class="tag">Enterprise</span>
-              <span class="tag">Greenfield</span>
-              <span class="tag">Data-heavy</span>
+            <div class="project-card__media">
+              <img src="images/cashroll/01-default-view.png" alt="" loading="lazy" onerror="this.closest('.project-card').classList.add('no-media')">
             </div>
-            <span class="project-card__link">View case study</span>
+            <div class="project-card__body">
+              <p class="project-card__num">01</p>
+              <h2 class="project-card__title">Cash Management Tool</h2>
+              <p class="project-card__desc">A transaction data grid replacing manual Excel workflows for cash operations.</p>
+              <div class="project-card__tags">
+                <span class="tag">Enterprise</span>
+                <span class="tag">Greenfield</span>
+                <span class="tag">Data-heavy</span>
+              </div>
+              <span class="project-card__link">View case study</span>
+            </div>
           </div>
 
           <!-- 02 — Deal Terms -->
           <div class="project-card" data-id="deal-terms" onclick="openCaseStudy('deal-terms')">
-            <p class="project-card__num">02</p>
-            <h2 class="project-card__title">Deal Terms Capture</h2>
-            <p class="project-card__desc">A standalone platform for structuring capital stacks and capturing deal terms — carved out when the equity scope outgrew its original system.</p>
-            <div class="project-card__tags">
-              <span class="tag">Enterprise</span>
-              <span class="tag">Greenfield</span>
-              <span class="tag">Complex forms</span>
+            <div class="project-card__media">
+              <img src="images/deal-terms/01-landing.png" alt="" loading="lazy" onerror="this.closest('.project-card').classList.add('no-media')">
             </div>
-            <span class="project-card__link">View case study</span>
+            <div class="project-card__body">
+              <p class="project-card__num">02</p>
+              <h2 class="project-card__title">Deal Terms Capture</h2>
+              <p class="project-card__desc">A standalone platform for structuring capital stacks and capturing deal terms — carved out when the equity scope outgrew its original system.</p>
+              <div class="project-card__tags">
+                <span class="tag">Enterprise</span>
+                <span class="tag">Greenfield</span>
+                <span class="tag">Complex forms</span>
+              </div>
+              <span class="project-card__link">View case study</span>
+            </div>
           </div>
 
           <!-- 03 — Insurance Matching -->
           <div class="project-card" data-id="insurance" onclick="openCaseStudy('insurance')">
-            <p class="project-card__num">03</p>
-            <h2 class="project-card__title">Insurance Matching Dashboard</h2>
-            <p class="project-card__desc">Replacing email chains and manual invoice tracking with a reconciliation dashboard and tagging flows.</p>
-            <div class="project-card__tags">
-              <span class="tag">Enterprise</span>
-              <span class="tag">Greenfield</span>
-              <span class="tag">Ops</span>
+            <div class="project-card__media">
+              <img src="images/insurance/01-validated-amounts.png" alt="" loading="lazy" onerror="this.closest('.project-card').classList.add('no-media')">
             </div>
-            <span class="project-card__link">View case study</span>
+            <div class="project-card__body">
+              <p class="project-card__num">03</p>
+              <h2 class="project-card__title">Insurance Matching Dashboard</h2>
+              <p class="project-card__desc">Replacing email chains and manual invoice tracking with a reconciliation dashboard and tagging flows.</p>
+              <div class="project-card__tags">
+                <span class="tag">Enterprise</span>
+                <span class="tag">Greenfield</span>
+                <span class="tag">Ops</span>
+              </div>
+              <span class="project-card__link">View case study</span>
+            </div>
           </div>
 
           <!-- 04 — Credit Risk -->
           <div class="project-card" data-id="credit" onclick="openCaseStudy('credit')">
-            <p class="project-card__num">04</p>
-            <h2 class="project-card__title">Credit Risk Memo &amp; Agreement Setup</h2>
-            <p class="project-card__desc">A revamp of an unusable legacy platform for credit agreement setup, Orion integration, and audit trail.</p>
-            <div class="project-card__tags">
-              <span class="tag">Enterprise</span>
-              <span class="tag">Revamp</span>
-              <span class="tag">Legacy replacement</span>
+            <div class="project-card__media">
+              <img src="images/credit/01-empty-state.png" alt="" loading="lazy" onerror="this.closest('.project-card').classList.add('no-media')">
             </div>
-            <span class="project-card__link">View case study</span>
+            <div class="project-card__body">
+              <p class="project-card__num">04</p>
+              <h2 class="project-card__title">Credit Risk Memo &amp; Agreement Setup</h2>
+              <p class="project-card__desc">A revamp of an unusable legacy platform for credit agreement setup, Orion integration, and audit trail.</p>
+              <div class="project-card__tags">
+                <span class="tag">Enterprise</span>
+                <span class="tag">Revamp</span>
+                <span class="tag">Legacy replacement</span>
+              </div>
+              <span class="project-card__link">View case study</span>
+            </div>
           </div>
 
           <!-- 05 — RedLine -->
           <div class="project-card" data-id="redline" onclick="openCaseStudy('redline')">
-            <p class="project-card__num">05</p>
-            <h2 class="project-card__title">RedLine</h2>
-            <p class="project-card__desc">A mobile-first app for artists and producers to create, collaborate on, and digitally sign music contracts.</p>
-            <div class="project-card__tags">
-              <span class="tag">Freelance</span>
-              <span class="tag">Mobile</span>
-              <span class="tag">Consumer</span>
+            <div class="project-card__media">
+              <img src="images/redline/cover.png" alt="" loading="lazy" onerror="this.closest('.project-card').classList.add('no-media')">
             </div>
-            <span class="project-card__link">View case study</span>
+            <div class="project-card__body">
+              <p class="project-card__num">05</p>
+              <h2 class="project-card__title">RedLine</h2>
+              <p class="project-card__desc">A mobile-first app for artists and producers to create, collaborate on, and digitally sign music contracts.</p>
+              <div class="project-card__tags">
+                <span class="tag">Freelance</span>
+                <span class="tag">Mobile</span>
+                <span class="tag">Consumer</span>
+              </div>
+              <span class="project-card__link">View case study</span>
+            </div>
           </div>
 
         </div>
@@ -2512,28 +2591,40 @@
       credit: {
         label: 'Credit Risk Memo & Agreement Setup',
         title: 'Credit Risk Memo & Agreement Setup',
-        subtitle: 'A revamp of an unusable legacy platform for credit agreement setup and audit trail.',
+        subtitle: 'Redesigning how deal teams set up securities inside Lithium — cutting an up-to-84-field manual process down to what is actually needed.',
         figma: 'https://www.figma.com/design/24ceRWhy229VxAzP5XVdu6/Untitled?node-id=1-51926',
         meta: [
           { label: 'Client',   value: 'A global investment bank' },
           { label: 'Role',     value: 'Lead UX Designer' },
           { label: 'Status',   value: 'In progress' },
-          { label: 'Type',     value: 'Enterprise · Revamp · Legacy replacement' },
-          { label: 'Before',   value: 'Legacy platform with poor UX' },
+          { label: 'Type',     value: 'Enterprise · Revamp · Private Credit' },
+          { label: 'Before',   value: 'Lithium — up to 84 fields keyed by hand' },
           { label: 'Year',     value: '2024–2025' },
         ],
-        overview: 'The credit risk team was working with a legacy system that had become functionally unusable — poor information architecture, no Orion integration, and an audit trail that existed in theory but not in practice. This project is a ground-up redesign of how credit agreements are set up and managed.',
-        problem: 'The existing platform accumulated years of misaligned requirements. Users had developed workarounds that bypassed the system entirely. Orion integration was broken. Compliance teams had no reliable audit trail.',
-        approach: '[ Placeholder — describe your research approach, discovery findings, key design decisions, and iterations here. ]',
-        outcome: '[ Placeholder — describe what shipped, adoption metrics, and any measured impact here. ]',
+        overview: `Deal teams across Private Credit set up securities inside Lithium, the platform that holds credit agreements, securities and credit-risk memos. Setting up one security meant filling in up to 84 fields by hand, and an opportunity could hold several. Nobody could tell you mid-flow how many were left, or whether what they'd entered would even pass.</p><p>So it broke in a predictable way. Securities and Credit Risk made up about a quarter of all the support tickets deal teams raised, and roughly 40% of those weren't bugs. They were people not understanding what the product wanted from them. Lithium held the data, but the actual work had drifted outside it.`,
+        problemNoteTop: `[ Your words — one line on what filling in 84 fields a security does to someone doing it all day. ]`,
+        problem: `The problem was volume and repetition, not one broken screen. When engineering pulled the data apart they found that 75.3% of the fields on a security were identical to another security in the same opportunity. The same information, typed again and again. Commercial Real Estate and Secured Lending were the worst offenders at around 84 fields each, against a fraction of that for Corporate Loans.</p><p>The field count wasn't the only issue. Required and optional fields looked the same. Error messages were written in system language instead of plain English. Field names and dropdowns went unexplained. And once you submitted, you had no way to see where your work sat in the maker/checker chain or whether a Prime ID had generated downstream. Every setup carried a layer of invisible work: remembering the quirks, checking things by hand, chasing status across teams.`,
+        approach: `I didn't take the legacy screens as the brief. I interviewed 25 deal-team members across three groups (Direct Lending, Real Estate and Urban Investment) and mapped the real securities workflow underneath what they were describing, scoring sentiment before and after so I wasn't working off anecdote.</p><p>That gave me a ranked list of 14 improvement opportunities, prioritised with engineering by impact against effort. The top ones weren't cosmetic. Stop the duplicate data entry across securities. Make required versus optional obvious. Give people status transparency downstream. Rewrite the errors into something human. Separate the fields needed at IC, Commitment and Close so nobody was shown everything at once.</p><p>Two of the fourteen were about AI data extraction: pulling field values straight out of uploaded deal documents, and handling the conflict when a user's input and the AI's disagree on the same field. That's the direction the next phase takes.`,
+        screensIntro: `Copy-across, so shared fields populate once per opportunity rather than once per security. That was the single biggest lever, and it came straight off the 75.3% finding. A restructured setup flow that separates what's needed at IC, Commitment and Close, so users see the right fields at the right stage. Inline validation and rewritten error messages that actually say what's wrong. A progress and submission-status layer so people can see how complete they are and where their eTask sits, including collapsing up to three separate maker/checker eTasks (Credit Agreement, Securities, Credit Risk) into one where it applies. And the groundwork for AI-extracted field population in the next phase.`,
+        outcome: `The work is still in progress, so the impact here is projected rather than measured.`,
+        outcomeNote: `[ Your words + the real numbers, framed as projected — the board gives you: ~40,295 fewer field entries a year · 225+ hours saved annually · a target 75% cut in Securities & Credit Risk support tickets · positive sentiment from 90% of the deal-team members interviewed. ]`,
+        evidence: [
+          '25 deal-team members interviewed',
+          '3 personas',
+          '14 opportunities ranked with engineering',
+          '~84 → 40–50 target fields',
+          '75.3% field redundancy identified',
+          '~40,295 entries / 225+ hrs projected annual saving',
+        ],
         beforeAfter: {
-          beforeTag: 'Legacy', afterTag: 'Redesign',
-          summary: 'Unusable legacy platform, broken Orion',
-          beforeLabel: 'Legacy platform — poor IA, broken Orion integration',
-          beforeIssues: ['Years of misaligned requirements', 'Users bypassed the system', 'Broken Orion integration', 'No reliable audit trail'],
+          beforeTag: '~84 fields', afterTag: '40–50',
+          summary: 'Lithium held the data. The work had drifted outside it.',
+          intro: `Before, setting up a security meant up to 84 fields keyed by hand, most of them duplicates of a security you'd already done, with no sense of what was required or where your submission went.</p><p>After, securities inherit their shared fields instead of asking twice. Required and optional are clearly split, validation reads like plain English, progress shows live as "X of Y required fields complete," and submission status is visible through the maker/checker flow. Target field counts come down from around 84 to 40–50.`,
+          beforeLabel: 'Up to 84 fields, keyed by hand, per security',
+          beforeIssues: ['Up to 84 fields per security, by hand', '75.3% duplicated from another security', 'Required vs optional looked identical', 'Errors in system language', 'No status once submitted'],
           afterSrc: 'images/credit/01-empty-state.png',
-          afterLabel: 'Credit Risk — agreement setup redesign',
-          afterWins: ['Clear information architecture', 'Orion integration restored', 'Full audit trail in practice'],
+          afterLabel: 'Securities setup, restructured',
+          afterWins: ['Copy-across: shared fields inherited', 'Fields staged by IC / Commitment / Close', 'Plain-English validation', 'Live "X of Y required" progress', 'One combined maker/checker view'],
         },
         gallery: [
           { src: 'images/credit/01-empty-state.png', caption: 'Empty state — clear onboarding into the agreement setup flow.' },
@@ -2850,6 +2941,7 @@
 
         <div class="cs-section">
           <p class="cs-section-label">Why it was difficult</p>
+          ${data.problemNoteTop ? `<p class="cs-note">${data.problemNoteTop}</p>` : ''}
           <p>${data.problem}</p>
           ${data.problemNote ? `<p class="cs-note">${data.problemNote}</p>` : ''}
         </div>
@@ -2880,6 +2972,12 @@
           <p>${data.outcome}</p>
           ${data.outcomeNote ? `<p class="cs-note">${data.outcomeNote}</p>` : ''}
         </div>
+
+        ${data.evidence && data.evidence.length ? `
+        <div class="cs-section">
+          <p class="cs-section-label">Evidence</p>
+          <ul class="cs-evidence">${data.evidence.map(e => `<li class="cs-evidence__item">${e}</li>`).join('')}</ul>
+        </div>` : ''}
       `;
 
       const overlay = document.getElementById('case-study-overlay');
