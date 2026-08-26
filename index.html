@@ -811,6 +811,41 @@
       transform: translateX(4px);
     }
 
+    /* Locked / in-progress project card — teaser only, not clickable */
+    .project-card--locked {
+      cursor: default;
+    }
+    .project-card--locked:hover {
+      transform: none;
+      filter: none;
+    }
+    .project-card--locked .project-card__media {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f4f4f4;
+    }
+    .project-card__lock {
+      width: 28px;
+      height: 28px;
+      color: #b8b8b8;
+    }
+    .project-card--locked .project-card__title,
+    .project-card--locked .project-card__desc {
+      color: var(--ux-muted);
+    }
+    .project-card__link--locked {
+      color: #a8a8a8;
+      cursor: default;
+    }
+    .project-card__link--locked .project-card__link-icon {
+      width: 13px;
+      height: 13px;
+    }
+    .project-card__link--locked::after {
+      content: '';
+    }
+
     /* Password gate */
     .pw-gate {
       position: fixed;
@@ -2263,31 +2298,13 @@
             </div>
           </div>
 
-          <!-- 03 — Insurance Matching -->
-          <div class="project-card" data-id="insurance" onclick="openCaseStudy('insurance')">
-            <div class="project-card__media">
-              <img src="images/insurance/01-validated-amounts.png" alt="" loading="lazy" onerror="this.closest('.project-card').classList.add('no-media')">
-            </div>
-            <div class="project-card__body">
-              <p class="project-card__num">03</p>
-              <h2 class="project-card__title">Insurance Expense Matching Dashboard</h2>
-              <p class="project-card__desc">Replacing email chains and manual invoice tracking with a reconciliation dashboard and tagging flows.</p>
-              <div class="project-card__tags">
-                <span class="tag">Enterprise</span>
-                <span class="tag">Greenfield</span>
-                <span class="tag">Ops</span>
-              </div>
-              <span class="project-card__link">View case study</span>
-            </div>
-          </div>
-
-          <!-- 04 — Deal Terms -->
+          <!-- 03 — Deal Terms -->
           <div class="project-card" data-id="deal-terms" onclick="openCaseStudy('deal-terms')">
             <div class="project-card__media">
               <img src="images/deal-terms/01-landing.png" alt="" loading="lazy" onerror="this.closest('.project-card').classList.add('no-media')">
             </div>
             <div class="project-card__body">
-              <p class="project-card__num">04</p>
+              <p class="project-card__num">03</p>
               <h2 class="project-card__title">Deal Terms Capture</h2>
               <p class="project-card__desc">A standalone platform for structuring capital stacks and capturing deal terms — carved out when the equity scope outgrew its original system.</p>
               <div class="project-card__tags">
@@ -2299,10 +2316,40 @@
             </div>
           </div>
 
-          <!-- 05 — RedLine -->
-          <div class="project-card" data-id="redline" onclick="openCaseStudy('redline')">
+          <!-- 04 — Insurance Matching (locked, copy not finished) -->
+          <div class="project-card project-card--locked" data-id="insurance">
             <div class="project-card__media">
-              <img src="images/redline/cover.png" alt="" loading="lazy" onerror="this.closest('.project-card').classList.add('no-media')">
+              <svg class="project-card__lock" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="project-card__body">
+              <p class="project-card__num">04</p>
+              <h2 class="project-card__title">Insurance Expense Matching Dashboard</h2>
+              <p class="project-card__desc">Replacing email chains and manual invoice tracking with a reconciliation dashboard and tagging flows.</p>
+              <div class="project-card__tags">
+                <span class="tag">Enterprise</span>
+                <span class="tag">Greenfield</span>
+                <span class="tag">Ops</span>
+              </div>
+              <span class="project-card__link project-card__link--locked">
+                <svg class="project-card__link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+                Case study in progress
+              </span>
+            </div>
+          </div>
+
+          <!-- 05 — RedLine (locked, copy not finished) -->
+          <div class="project-card project-card--locked" data-id="redline">
+            <div class="project-card__media">
+              <svg class="project-card__lock" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
             </div>
             <div class="project-card__body">
               <p class="project-card__num">05</p>
@@ -2313,7 +2360,13 @@
                 <span class="tag">Mobile</span>
                 <span class="tag">Consumer</span>
               </div>
-              <span class="project-card__link">View case study</span>
+              <span class="project-card__link project-card__link--locked">
+                <svg class="project-card__link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+                Case study in progress
+              </span>
             </div>
           </div>
 
