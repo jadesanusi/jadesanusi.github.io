@@ -716,6 +716,7 @@
     }
 
     .project-card__media {
+      position: relative;
       flex: 0 0 clamp(200px, 30%, 320px);
       align-self: stretch;
       min-height: 156px;
@@ -811,7 +812,7 @@
       transform: translateX(4px);
     }
 
-    /* Locked / in-progress project card — teaser only, not clickable */
+    /* Locked / in-progress project card — image stays visible under a dark scrim, teaser only, not clickable */
     .project-card--locked {
       cursor: default;
     }
@@ -819,31 +820,33 @@
       transform: none;
       filter: none;
     }
-    .project-card--locked .project-card__media {
+    .project-card--locked:hover .project-card__media img {
+      transform: none;
+    }
+    .project-card__lock-overlay {
+      position: absolute;
+      inset: 0;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: #f4f4f4;
+      gap: 10px;
+      background: rgba(20, 20, 20, 0.6);
     }
     .project-card__lock {
-      width: 28px;
-      height: 28px;
-      color: #b8b8b8;
+      width: 24px;
+      height: 24px;
+      color: #fff;
+    }
+    .project-card__lock-overlay span {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: #fff;
     }
     .project-card--locked .project-card__title,
     .project-card--locked .project-card__desc {
       color: var(--ux-muted);
-    }
-    .project-card__link--locked {
-      color: #a8a8a8;
-      cursor: default;
-    }
-    .project-card__link--locked .project-card__link-icon {
-      width: 13px;
-      height: 13px;
-    }
-    .project-card__link--locked::after {
-      content: '';
     }
 
     /* Password gate */
@@ -2319,10 +2322,14 @@
           <!-- 04 — Insurance Matching (locked, copy not finished) -->
           <div class="project-card project-card--locked" data-id="insurance">
             <div class="project-card__media">
-              <svg class="project-card__lock" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/>
-                <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
+              <img src="images/insurance/01-validated-amounts.png" alt="" loading="lazy" onerror="this.style.display='none'">
+              <div class="project-card__lock-overlay">
+                <svg class="project-card__lock" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/>
+                  <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+                <span>Case study in progress</span>
+              </div>
             </div>
             <div class="project-card__body">
               <p class="project-card__num">04</p>
@@ -2333,23 +2340,20 @@
                 <span class="tag">Greenfield</span>
                 <span class="tag">Ops</span>
               </div>
-              <span class="project-card__link project-card__link--locked">
-                <svg class="project-card__link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
-                  <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                </svg>
-                Case study in progress
-              </span>
             </div>
           </div>
 
           <!-- 05 — RedLine (locked, copy not finished) -->
           <div class="project-card project-card--locked" data-id="redline">
             <div class="project-card__media">
-              <svg class="project-card__lock" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/>
-                <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
+              <img src="images/redline/cover.png" alt="" loading="lazy" onerror="this.style.display='none'">
+              <div class="project-card__lock-overlay">
+                <svg class="project-card__lock" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/>
+                  <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+                <span>Case study in progress</span>
+              </div>
             </div>
             <div class="project-card__body">
               <p class="project-card__num">05</p>
@@ -2360,13 +2364,6 @@
                 <span class="tag">Mobile</span>
                 <span class="tag">Consumer</span>
               </div>
-              <span class="project-card__link project-card__link--locked">
-                <svg class="project-card__link-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
-                  <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                </svg>
-                Case study in progress
-              </span>
             </div>
           </div>
 
