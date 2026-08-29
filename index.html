@@ -665,9 +665,88 @@
       display: block;
     }
 
+    .ux-stat__plus {
+      font-size: 16px;
+      vertical-align: super;
+      margin-left: 1px;
+    }
+
     .ux-stat__label {
       font-size: 13px;
       color: var(--ux-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .ux-stat__info {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid var(--ux-muted);
+      font-size: 10px;
+      font-style: italic;
+      font-family: Georgia, serif;
+      color: var(--ux-muted);
+      cursor: default;
+    }
+
+    .ux-stat__popover {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      width: 240px;
+      background: var(--ux-surface);
+      border: 1px solid var(--ux-border);
+      border-radius: var(--radius-card);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      padding: 14px 16px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      z-index: 20;
+      text-align: left;
+      cursor: default;
+    }
+
+    .ux-stat__info:hover .ux-stat__popover,
+    .ux-stat__info:focus .ux-stat__popover,
+    .ux-stat__info:focus-within .ux-stat__popover {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .ux-stat__popover-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ux-muted);
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--ux-border);
+    }
+
+    .ux-stat__popover ol {
+      list-style: decimal;
+      padding-left: 18px;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .ux-stat__popover li {
+      font-size: 13px;
+      color: var(--ux-muted);
+      font-style: italic;
+      line-height: 1.4;
     }
 
     /* UX Work Grid */
@@ -2235,12 +2314,34 @@
         <p class="ux-hero__role">Currently at Goldman Sachs, designing complex solutions for alternative investments.</p>
         <div class="ux-hero__stats">
           <div class="ux-stat">
-            <span class="ux-stat__num">3</span>
+            <span class="ux-stat__num">3<span class="ux-stat__plus">+</span></span>
             <span class="ux-stat__label">Years in enterprise UX</span>
           </div>
           <div class="ux-stat">
-            <span class="ux-stat__num">7</span>
-            <span class="ux-stat__label">Greenfield projects</span>
+            <span class="ux-stat__num">12</span>
+            <span class="ux-stat__label">
+              Shipped projects
+              <span class="ux-stat__info" tabindex="0" aria-label="List of shipped projects">
+                i
+                <span class="ux-stat__popover">
+                  <span class="ux-stat__popover-title">Shipped projects</span>
+                  <ol>
+                    <li>[ Project title ]</li>
+                    <li>[ Project title ]</li>
+                    <li>[ Project title ]</li>
+                    <li>[ Project title ]</li>
+                    <li>[ Project title ]</li>
+                    <li>[ Project title ]</li>
+                    <li>[ Project title ]</li>
+                    <li>[ Project title ]</li>
+                    <li>[ Project title ]</li>
+                    <li>[ Project title ]</li>
+                    <li>[ Project title ]</li>
+                    <li>[ Project title ]</li>
+                  </ol>
+                </span>
+              </span>
+            </span>
           </div>
         </div>
       </div>
