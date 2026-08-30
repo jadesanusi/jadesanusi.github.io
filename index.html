@@ -262,6 +262,12 @@
     .nav-cv:hover { opacity: 0.85; transform: translateY(-1px); }
     nav.nav--hmu .nav-cv { background: #fff; color: #000; border-color: #fff; }
 
+    /* On the UX section, name + CV live in the sketched Finder bar instead */
+    nav.nav--ux .nav-name,
+    nav.nav--ux .nav-cv {
+      display: none;
+    }
+
     /* ============================================================
        DESKTOP LAYER — hand-drawn Finder menu bar + icons
        (additive; sits inside #ux, revealed after unlock)
@@ -281,17 +287,22 @@
     .finder-bar__img {
       display: block;
       width: 100%;
-      /* Opt 1 is 11442×353. Trim height ~10% so the bar sits in line with the
-         nav's wordmark + Download CV button, while edges stay aligned to them. */
-      aspect-ratio: 11442 / 318;
       height: auto;
       object-fit: fill;
     }
+    .finder-bar__img--desktop { aspect-ratio: 2025 / 100; }
+    .finder-bar__img--mobile  { aspect-ratio: 1258 / 129; }
     /* Everything in the bar is baked into the image — interactivity comes
        from invisible hotspot buttons positioned by % over each drawing. */
     .finder-bar__wrap {
       position: relative;
       line-height: 0;
+    }
+    /* Desktop/iPad bar shows by default; mobile bar swaps in below 640px */
+    .finder-bar__wrap--mobile { display: none; }
+    @media (max-width: 639px) {
+      .finder-bar__wrap--desktop { display: none; }
+      .finder-bar__wrap--mobile { display: block; }
     }
     .fb-spot {
       position: absolute;
@@ -313,8 +324,8 @@
       position: absolute;
       top: 20%;
       bottom: 20%;
-      left: 82.3%;
-      width: 10.9%;
+      left: 77.3%;
+      width: 12.3%;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -539,10 +550,6 @@
     @media (max-width: 1024px) {
       .desktop-icons { display: none; }
       .hero-annotations { display: none; }
-    }
-    @media (max-width: 640px) {
-      /* Bar gets too thin to read — hide it entirely; icons already hidden at 900px */
-      .finder-bar { display: none; }
     }
 
     /* ============================================================
@@ -2275,19 +2282,29 @@
 
     <!-- Doodle Finder menu bar (desktop layer) -->
     <div class="finder-bar" id="finder-bar">
-      <div class="finder-bar__wrap">
-        <img class="finder-bar__img" src="assets/toolbar-opt1.png" alt="" aria-hidden="true" />
+      <!-- Desktop / iPad bar — shown ≥640px -->
+      <div class="finder-bar__wrap finder-bar__wrap--desktop">
+        <img class="finder-bar__img finder-bar__img--desktop" src="assets/toolbar-desktop.png" alt="" aria-hidden="true" />
         <!-- Invisible hotspots over the baked drawings -->
-        <button class="fb-spot" id="fb-apple" style="left:1.6%;width:2.9%" aria-label="About this designer"></button>
-        <button class="fb-spot" data-spot="shrug"   style="left:60.2%;width:7.3%"  aria-label="Shrug"></button>
-        <button class="fb-spot" data-spot="wifi"    style="left:68%;width:3%"      aria-label="Wi-Fi"></button>
-        <button class="fb-spot" data-spot="volume"  style="left:71.4%;width:3%"    aria-label="Volume"></button>
-        <button class="fb-spot" data-spot="battery" style="left:74.6%;width:3%"    aria-label="Battery"></button>
-        <button class="fb-spot" data-spot="clock"   style="left:78.6%;width:11.3%" aria-label="Clock"></button>
-        <button class="fb-spot" data-spot="search"  style="left:92%;width:3%"      aria-label="Search"></button>
-        <button class="fb-spot" data-spot="menu"    style="left:95.2%;width:3.2%"  aria-label="Menu"></button>
+        <button class="fb-spot fb-apple" style="left:1.8%;width:2.9%" aria-label="About this designer"></button>
+        <button class="fb-spot" style="left:5.5%;width:13.3%" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Jadesola Sanusi — scroll to top"></button>
+        <button class="fb-spot" data-spot="shrug"   style="left:62.7%;width:5.9%"  aria-label="Shrug"></button>
+        <button class="fb-spot" data-spot="wifi"    style="left:68.8%;width:2.4%"  aria-label="Wi-Fi"></button>
+        <button class="fb-spot" data-spot="volume"  style="left:71.5%;width:2.6%"  aria-label="Volume"></button>
+        <button class="fb-spot" data-spot="battery" style="left:74.4%;width:2.6%"  aria-label="Battery"></button>
+        <button class="fb-spot" data-spot="clock"   style="left:77.3%;width:12.3%" aria-label="Clock"></button>
+        <button class="fb-spot" data-spot="search"  style="left:89.3%;width:2.9%"  aria-label="Search"></button>
+        <a class="fb-spot" href="assets/Jadesola-Sanusi-CV.zip" download style="left:92.3%;width:7.3%" aria-label="Download CV"></a>
         <!-- Live clock overlaid on the baked date (patch hides the printed one) -->
         <span class="fb-livedate" id="fb-livedate" role="status" aria-label="Current date and time"></span>
+      </div>
+      <!-- Mobile bar — shown <640px -->
+      <div class="finder-bar__wrap finder-bar__wrap--mobile">
+        <img class="finder-bar__img finder-bar__img--mobile" src="assets/toolbar-mobile.png" alt="" aria-hidden="true" />
+        <button class="fb-spot fb-apple" style="left:0.3%;width:8.2%" aria-label="About this designer"></button>
+        <button class="fb-spot" style="left:10.3%;width:21.5%" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Jadesola Sanusi — scroll to top"></button>
+        <a class="fb-spot" href="assets/Jadesola-Sanusi-CV.zip" download style="left:79.5%;width:12.2%" aria-label="Download CV"></a>
+        <button class="fb-spot" data-spot="menu" style="left:93.5%;width:3.3%" aria-label="Menu"></button>
       </div>
     </div>
 
@@ -3497,9 +3514,10 @@
         });
       });
 
-      // ── Apple-logo hotspot → About ──
-      const apple = document.getElementById('fb-apple');
-      if (apple) apple.addEventListener('click', () => openWindow('mac-hd', apple));
+      // ── Apple-logo hotspots → About (one per bar variant) ──
+      document.querySelectorAll('.fb-apple').forEach(apple => {
+        apple.addEventListener('click', () => openWindow('mac-hd', apple));
+      });
 
       // ── Shrug Easter egg ──
       const shrug = document.getElementById('fb-shrug');
@@ -3516,31 +3534,31 @@
         });
       }
 
-      // ── Baked-toolbar hotspots → hand-drawn toast replies ──
-      const wrap = document.querySelector('.finder-bar__wrap');
-      if (wrap) {
+      // ── Baked-toolbar hotspots → hand-drawn toast replies (each bar variant gets its own toast) ──
+      const fmt = new Intl.DateTimeFormat('en-GB', {
+        weekday: 'short', day: 'numeric', month: 'short',
+        hour: '2-digit', minute: '2-digit', hour12: false
+      });
+      const nowStr = () => {
+        const p = Object.fromEntries(fmt.formatToParts(new Date()).map(x => [x.type, x.value]));
+        return `${p.weekday}, ${p.day} ${p.month} ${p.hour}:${p.minute}`;
+      };
+      let soundOn = true;
+      const MSG = {
+        shrug:   () => 'no notes ¯\\_(ツ)_/¯',
+        wifi:    () => 'connected — vibes are strong',
+        volume:  () => { soundOn = !soundOn; return soundOn ? 'sound: on' : 'sound: off'; },
+        battery: () => '100% — powered by coffee',
+        clock:   () => `right now: ${nowStr()}`,
+        search:  () => 'nothing to find here… yet',
+        menu:    () => 'menu coming soon',
+      };
+      document.querySelectorAll('.finder-bar__wrap').forEach(wrap => {
         const toast = document.createElement('div');
         toast.className = 'fb-toast';
         toast.setAttribute('role', 'status');
         wrap.appendChild(toast);
-        let toastTimer = null, soundOn = true;
-        const fmt = new Intl.DateTimeFormat('en-GB', {
-          weekday: 'short', day: 'numeric', month: 'short',
-          hour: '2-digit', minute: '2-digit', hour12: false
-        });
-        const nowStr = () => {
-          const p = Object.fromEntries(fmt.formatToParts(new Date()).map(x => [x.type, x.value]));
-          return `${p.weekday}, ${p.day} ${p.month} ${p.hour}:${p.minute}`;
-        };
-        const MSG = {
-          shrug:   () => 'no notes ¯\\_(ツ)_/¯',
-          wifi:    () => 'connected — vibes are strong',
-          volume:  () => { soundOn = !soundOn; return soundOn ? 'sound: on' : 'sound: off'; },
-          battery: () => '100% — powered by coffee',
-          clock:   () => `right now: ${nowStr()}`,
-          search:  () => 'nothing to find here… yet',
-          menu:    () => 'menu coming soon',
-        };
+        let toastTimer = null;
         wrap.querySelectorAll('.fb-spot[data-spot]').forEach(spot => {
           spot.addEventListener('click', () => {
             const fn = MSG[spot.dataset.spot];
@@ -3554,7 +3572,7 @@
             toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
           });
         });
-      }
+      });
     });
   </script>
 
