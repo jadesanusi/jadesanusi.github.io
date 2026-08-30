@@ -3075,30 +3075,27 @@
       }
     }
 
-    // Welcome tooltip: shows once automatically on first visit (persisted via
-    // localStorage), and can be reopened any time via the "?" help button.
+    // Welcome tooltip: shows automatically every time the page is entered,
+    // and stays up until the user dismisses it (× or clicking "?" again).
+    // Can also be reopened any time afterwards via the "?" help button.
     function initWelcomeTooltip() {
       const tooltip = document.getElementById('help-tooltip');
       const btn = document.getElementById('help-btn');
       const closeBtn = document.getElementById('help-tooltip-close');
-      if (!tooltip || !btn || btn.dataset.wired) return;
-      btn.dataset.wired = '1';
+      if (!tooltip || !btn) return;
 
       const show = () => tooltip.classList.add('show');
       const hide = () => tooltip.classList.remove('show');
 
-      btn.addEventListener('click', () => {
-        tooltip.classList.contains('show') ? hide() : show();
-      });
-      closeBtn.addEventListener('click', hide);
-
-      const KEY = 'jd-welcome-tooltip-seen';
-      let seen = false;
-      try { seen = localStorage.getItem(KEY) === '1'; } catch (e) {}
-      if (!seen) {
-        show();
-        try { localStorage.setItem(KEY, '1'); } catch (e) {}
+      if (!btn.dataset.wired) {
+        btn.dataset.wired = '1';
+        btn.addEventListener('click', () => {
+          tooltip.classList.contains('show') ? hide() : show();
+        });
+        closeBtn.addEventListener('click', hide);
       }
+
+      show();
     }
 
     // ——— Tab switching ——————————————————————————————————————————
@@ -3690,13 +3687,12 @@
         // While fully powered down, the whole (black) screen is the "press to restore" target
         overlay.addEventListener('click', () => {
           if (state !== 'dead') return;
-          state = 'restoring';
+          cancelAnimationFrame(rafId);
+          state = 'idle';
           overlay.style.pointerEvents = 'none';
-          run(0, 100, () => {
-            state = 'idle';
-            icon.classList.remove('active');
-            if (readout) readout.classList.remove('show');
-          });
+          paint(100);
+          icon.classList.remove('active');
+          if (readout) readout.classList.remove('show');
         });
       })();
 
