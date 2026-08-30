@@ -532,38 +532,73 @@
       margin-bottom: 12px;
     }
 
-    /* ── Hand-drawn intro annotations ── */
-    .hero-annotations {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;   /* purely decorative — never blocks clicks */
-      z-index: 4;
-      overflow: visible;
+    /* ── Welcome tooltip + persistent help button ── */
+    .help-widget {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 90;
     }
-    .hann {
-      position: absolute;
-      display: block;
-      height: auto;
-      opacity: 0;
-      transition: opacity 0.8s ease;   /* direction lives in each element's transform */
-      mix-blend-mode: multiply;        /* drops the JPG white bg, keeps the coloured ink */
+    .help-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #1a1a1a;
+      background: #fdfdfb;
+      color: #1a1a1a;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+      transition: transform 0.15s ease;
     }
-    .hann.show { opacity: 1; }
+    .help-btn:hover { transform: translateY(-2px) rotate(-4deg); }
+    .help-btn:focus-visible { outline: 2px solid #5768FF; outline-offset: 2px; }
 
-    /* group 1 — teal "the icons are all interactive" (upper, points up-right at the icons) */
-    .hann--icons-label { top: 3%;  left: 49%;  width: 176px; }
-    .hann--icons-arrow { top: 6%;  left: 60%;  width: 72px;  transform: rotate(38deg); }
-    /* group 2 — lime "click to view extracurricular projects" (right, points up-right at folders) */
-    .hann--extra-label { top: 44%; right: 5%;  width: 205px; }
-    .hann--extra-arrow { top: 22%; right: 11%; width: 96px;  transform: rotate(-4deg); }
-    /* group 3 — pink "scroll to selected projects" (lower centre; arrow flipped to point DOWN at Selected Work) */
-    .hann--scroll-label { top: 66%; left: 43%; width: 176px; }
-    .hann--scroll-arrow { top: 62%; left: 32%; width: 70px;  transform: scaleY(-1) rotate(8deg); }
+    .help-tooltip {
+      position: absolute;
+      right: 0;
+      bottom: calc(100% + 14px);
+      width: 260px;
+      max-width: calc(100vw - 48px);
+      background: #fdfdfb;
+      border: 2px solid #1a1a1a;
+      border-radius: 20px 20px 4px 20px;   /* tail corner points down at the button */
+      padding: 16px 30px 16px 18px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(8px);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+      font-family: 'Patrick Hand', cursive;
+      font-size: 17px;
+      line-height: 1.5;
+      color: #1a1a1a;
+    }
+    .help-tooltip.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .help-tooltip p { margin: 0; }
+    .help-tooltip__close {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      line-height: 1;
+      color: #1a1a1a;
+      cursor: pointer;
+      padding: 4px 6px;
+    }
+    .help-tooltip__close:hover { opacity: 0.6; }
 
     /* ── Responsive — hide desktop layer where it can't fit ── */
     @media (max-width: 1024px) {
       .desktop-icons { display: none; }
-      .hero-annotations { display: none; }
     }
 
     /* ============================================================
@@ -2406,16 +2441,15 @@
         </div>
       </div>
 
-      <!-- Hand-drawn intro annotations — fade in one-by-one after unlock -->
-      <div class="hero-annotations" id="hero-annotations" aria-hidden="true">
-        <img class="hann hann--icons-arrow"  src="assets/annotations/ann-icons-arrow.jpg"  alt="" data-ann="1" onerror="this.style.display='none'">
-        <img class="hann hann--icons-label"  src="assets/annotations/ann-icons-label.jpg"  alt="" data-ann="1" onerror="this.style.display='none'">
-        <img class="hann hann--extra-arrow"  src="assets/annotations/ann-extra-arrow.jpg"  alt="" data-ann="2" onerror="this.style.display='none'">
-        <img class="hann hann--extra-label"  src="assets/annotations/ann-extra-label.jpg"  alt="" data-ann="2" onerror="this.style.display='none'">
-        <img class="hann hann--scroll-arrow" src="assets/annotations/ann-scroll-arrow.jpg" alt="" data-ann="3" onerror="this.style.display='none'">
-        <img class="hann hann--scroll-label" src="assets/annotations/ann-scroll-label.jpg" alt="" data-ann="3" onerror="this.style.display='none'">
-      </div>
+    </div>
 
+    <!-- Welcome tooltip + persistent help button -->
+    <div class="help-widget">
+      <div class="help-tooltip" id="help-tooltip" role="dialog" aria-label="Welcome">
+        <button class="help-tooltip__close" id="help-tooltip-close" aria-label="Close">&times;</button>
+        <p>Welcome to my interactive web page 👋<br>Everything is clickable — or at least most things are. Have a go!</p>
+      </div>
+      <button class="help-btn" id="help-btn" aria-label="Help and instructions">?</button>
     </div>
 
     <!-- Work grid -->
@@ -2965,7 +2999,7 @@
         requestAnimationFrame(() => requestAnimationFrame(() => {
           document.getElementById('ux').classList.add('visible');
         }));
-        revealAnnotations();
+        initWelcomeTooltip();
       } else {
         input.classList.add('error');
         error.textContent = 'Wrong password. Try again.';
@@ -2974,23 +3008,30 @@
       }
     }
 
-    // Intro annotations: fade in one-by-one (~2s apart) after a successful unlock,
-    // then once all are showing, fade them all away together after 3s.
-    let annotationsShown = false;
-    function revealAnnotations() {
-      if (annotationsShown) return;
-      if (window.matchMedia('(max-width: 1024px)').matches) return;   // desktop only
-      annotationsShown = true;
-      const inDelay = 1000, step = 2000;
-      [1, 2, 3].forEach((g, i) => {
-        setTimeout(() => {
-          document.querySelectorAll(`.hann[data-ann="${g}"]`).forEach(el => el.classList.add('show'));
-        }, inDelay + i * step);
+    // Welcome tooltip: shows once automatically on first visit (persisted via
+    // localStorage), and can be reopened any time via the "?" help button.
+    function initWelcomeTooltip() {
+      const tooltip = document.getElementById('help-tooltip');
+      const btn = document.getElementById('help-btn');
+      const closeBtn = document.getElementById('help-tooltip-close');
+      if (!tooltip || !btn || btn.dataset.wired) return;
+      btn.dataset.wired = '1';
+
+      const show = () => tooltip.classList.add('show');
+      const hide = () => tooltip.classList.remove('show');
+
+      btn.addEventListener('click', () => {
+        tooltip.classList.contains('show') ? hide() : show();
       });
-      // all three are up at inDelay + 2*step; hold 3s, then fade out together
-      setTimeout(() => {
-        document.querySelectorAll('.hann').forEach(el => el.classList.remove('show'));
-      }, inDelay + 2 * step + 3000);
+      closeBtn.addEventListener('click', hide);
+
+      const KEY = 'jd-welcome-tooltip-seen';
+      let seen = false;
+      try { seen = localStorage.getItem(KEY) === '1'; } catch (e) {}
+      if (!seen) {
+        show();
+        try { localStorage.setItem(KEY, '1'); } catch (e) {}
+      }
     }
 
     // ——— Tab switching ——————————————————————————————————————————
