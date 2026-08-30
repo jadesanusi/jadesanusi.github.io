@@ -2419,7 +2419,7 @@
         <!-- Invisible hotspots over the baked drawings -->
         <button class="fb-spot fb-apple" style="left:1.8%;width:2.9%" aria-label="About this designer"></button>
         <button class="fb-spot" style="left:5.5%;width:13.3%" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Jadesola Sanusi — scroll to top"></button>
-        <button class="fb-spot" data-spot="shrug"   style="left:62.7%;width:5.9%"  aria-label="Shrug"></button>
+        <button class="fb-spot" id="fb-shrug-btn" data-spot="shrug"   style="left:62.7%;width:5.9%"  aria-label="Shrug"></button>
         <button class="fb-spot" data-spot="wifi"    style="left:68.8%;width:2.4%"  aria-label="Wi-Fi"></button>
         <button class="fb-spot" data-spot="volume"  style="left:71.5%;width:2.6%"  aria-label="Volume"></button>
         <button class="fb-spot" id="fb-battery-btn" data-spot="battery" style="left:74.4%;width:2.6%"  aria-label="Battery — click to watch it drain"></button>
@@ -3693,6 +3693,22 @@
           paint(100);
           icon.classList.remove('active');
           if (readout) readout.classList.remove('show');
+        });
+      })();
+
+      // ── Shrug icon: cycles the page cursor through shrug → doodle → default ──
+      (function(){
+        const btn = document.getElementById('fb-shrug-btn');
+        if (!btn) return;
+        const CURSORS = [
+          'default',
+          'url("assets/cursor-shrug.png") 0 0, auto',
+          'url("assets/cursor-doodle.png") 0 0, auto',
+        ];
+        let step = 0;
+        btn.addEventListener('click', () => {
+          step = (step + 1) % CURSORS.length;
+          document.body.style.cursor = CURSORS[step];
         });
       })();
 
