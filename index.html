@@ -262,9 +262,10 @@
     .nav-cv:hover { opacity: 0.85; transform: translateY(-1px); }
     nav.nav--hmu .nav-cv { background: #fff; color: #000; border-color: #fff; }
 
-    /* On the UX section, name + CV live in the sketched Finder bar instead */
-    nav.nav--ux .nav-name,
-    nav.nav--ux .nav-cv {
+    /* On the UX section, the sketched Finder bar IS the fixed header —
+       the plain nav (with its name + CV) is retired here to avoid a
+       blank fixed bar sitting behind it. HMU/Industrial Design keep the nav. */
+    nav.nav--ux {
       display: none;
     }
 
@@ -274,14 +275,19 @@
     ============================================================ */
 
     /* ── Finder menu bar ──
-       Full page width, matching the top nav's 40px padding — so the bar's left
-       edge lines up with the "Jadesola Sanusi" wordmark and its right edge with
-       the "Download CV" button. Hero text + folders sit inset within this frame. */
+       This IS the fixed header on the UX section now (nav.nav--ux is hidden) —
+       pinned to the top of the viewport, with an opaque backing so scrolled
+       content disappears behind it rather than showing through the artwork's
+       transparent background. Horizontal 40px inset kept exactly as before. */
     .finder-bar {
-      position: relative;
-      width: 100%;
-      margin: 56px 0 30px;      /* 56px below nav divider, 30px above hero (wireframe) */
-      padding: 0 40px;          /* edges align with the nav wordmark (L) and Download CV (R) */
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      margin: 0;
+      padding: 20px 40px 14px;  /* top breathing room now that nav is gone; bottom gap before content */
+      background: var(--ux-bg);
       line-height: 0;
     }
     .finder-bar__img {
@@ -569,6 +575,14 @@
 
     .section.visible {
       opacity: 1;
+    }
+
+    /* UX content clears the fixed Finder bar instead of the plain nav —
+       height is measured in JS since the bar's height is fluid (aspect-ratio
+       scales with viewport width, and swaps to the mobile art below 640px).
+       Fallback covers the pre-JS/no-JS paint. */
+    #ux.section {
+      padding-top: var(--finder-bar-h, 160px);
     }
 
     /* ============================================================
@@ -3443,6 +3457,18 @@
 
       closeBtn.addEventListener('click', closeWindow);
       backdrop.addEventListener('click', e => { if (e.target === backdrop) closeWindow(); });
+
+      // ── Keep UX content clear of the fixed Finder bar (its height is fluid —
+      //    aspect-ratio scales with viewport width, and it swaps art below 640px) ──
+      (function(){
+        const bar = document.getElementById('finder-bar');
+        if (!bar) return;
+        const sync = () => {
+          document.documentElement.style.setProperty('--finder-bar-h', bar.offsetHeight + 'px');
+        };
+        sync();
+        window.addEventListener('resize', sync);
+      })();
 
       // ── Live clock over the baked date ──
       (function(){
