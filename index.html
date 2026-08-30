@@ -753,10 +753,10 @@
       border-radius: 50%;
       border: 1px solid var(--ux-muted);
       font-size: 10px;
-      font-style: italic;
+      font-style: normal;
       font-family: Georgia, serif;
       color: var(--ux-muted);
-      cursor: default;
+      cursor: pointer;
     }
 
     .ux-stat__popover {
@@ -782,12 +782,25 @@
     }
 
     .ux-stat__info:hover .ux-stat__popover,
-    .ux-stat__info:focus .ux-stat__popover,
-    .ux-stat__info:focus-within .ux-stat__popover {
+    .ux-stat__popover.show {
       opacity: 1;
       visibility: visible;
       transform: translateX(-50%) translateY(0);
     }
+
+    .ux-stat__popover-close {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      background: none;
+      border: none;
+      font-size: 16px;
+      line-height: 1;
+      color: var(--ux-muted);
+      cursor: pointer;
+      padding: 4px 6px;
+    }
+    .ux-stat__popover-close:hover { color: var(--ux-ink); }
 
     /* Below 640px the info icon sits close to the right edge — centering the
        popover on it would push it off-screen, so anchor from the right instead */
@@ -798,8 +811,7 @@
         transform: translateY(4px);
       }
       .ux-stat__info:hover .ux-stat__popover,
-      .ux-stat__info:focus .ux-stat__popover,
-      .ux-stat__info:focus-within .ux-stat__popover {
+      .ux-stat__popover.show {
         transform: translateY(0);
       }
     }
@@ -814,6 +826,7 @@
       color: var(--ux-muted);
       margin-bottom: 8px;
       padding-bottom: 8px;
+      padding-right: 20px;
       border-bottom: 1px solid var(--ux-border);
     }
 
@@ -2416,9 +2429,10 @@
             <span class="ux-stat__num">12</span>
             <span class="ux-stat__label">
               Shipped projects
-              <span class="ux-stat__info" tabindex="0" aria-label="List of shipped projects">
+              <span class="ux-stat__info" id="ux-stat-info" tabindex="0" role="button" aria-expanded="false" aria-label="List of shipped projects">
                 i
-                <span class="ux-stat__popover">
+                <span class="ux-stat__popover" id="ux-stat-popover">
+                  <button class="ux-stat__popover-close" aria-label="Close">&times;</button>
                   <span class="ux-stat__popover-title">Shipped projects</span>
                   <ol>
                     <li>[ Project title ]</li>
@@ -3522,6 +3536,28 @@
 
       closeBtn.addEventListener('click', closeWindow);
       backdrop.addEventListener('click', e => { if (e.target === backdrop) closeWindow(); });
+
+      // ── "Shipped projects" info popover — tap/click to open, × or tap outside to close ──
+      (function(){
+        const info = document.getElementById('ux-stat-info');
+        const popover = document.getElementById('ux-stat-popover');
+        const closeBtn = popover ? popover.querySelector('.ux-stat__popover-close') : null;
+        if (!info || !popover) return;
+
+        const open = () => { popover.classList.add('show'); info.setAttribute('aria-expanded', 'true'); };
+        const close = () => { popover.classList.remove('show'); info.setAttribute('aria-expanded', 'false'); };
+        const toggle = () => { popover.classList.contains('show') ? close() : open(); };
+
+        info.addEventListener('click', e => {
+          if (popover.contains(e.target)) return;   // clicks inside the popover (e.g. the × ) are handled separately
+          toggle();
+        });
+        info.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+        });
+        closeBtn.addEventListener('click', e => { e.stopPropagation(); close(); });
+        document.addEventListener('click', e => { if (!info.contains(e.target)) close(); });
+      })();
 
       // ── Keep UX content clear of the fixed Finder bar (its height is fluid —
       //    aspect-ratio scales with viewport width, and it swaps art below 640px) ──
