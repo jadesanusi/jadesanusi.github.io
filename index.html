@@ -416,6 +416,18 @@
     }
     .fb-battery-readout.show { opacity: 1; }
 
+    /* Shrug-icon cursor Easter egg — !important + universal selector so the
+       custom cursor sticks everywhere, including over buttons/links that
+       set their own `cursor`, instead of flickering back to the pointer. */
+    body.cursor-shrug,
+    body.cursor-shrug * {
+      cursor: url("assets/cursor-shrug.png") 0 0, auto !important;
+    }
+    body.cursor-doodle,
+    body.cursor-doodle * {
+      cursor: url("assets/cursor-doodle.png") 0 0, auto !important;
+    }
+
     /* ── Desktop icons column ── */
     .desktop-icons {
       position: absolute;
@@ -3697,18 +3709,18 @@
       })();
 
       // ── Shrug icon: cycles the page cursor through shrug → doodle → default ──
+      // Uses body classes (not inline style.cursor) so the override reaches
+      // buttons/links that set their own cursor — otherwise the custom cursor
+      // flickers back to the default pointer every time it crosses one.
       (function(){
         const btn = document.getElementById('fb-shrug-btn');
         if (!btn) return;
-        const CURSORS = [
-          'default',
-          'url("assets/cursor-shrug.png") 0 0, auto',
-          'url("assets/cursor-doodle.png") 0 0, auto',
-        ];
+        const CLASSES = ['', 'cursor-shrug', 'cursor-doodle'];
         let step = 0;
         btn.addEventListener('click', () => {
-          step = (step + 1) % CURSORS.length;
-          document.body.style.cursor = CURSORS[step];
+          document.body.classList.remove('cursor-shrug', 'cursor-doodle');
+          step = (step + 1) % CLASSES.length;
+          if (CLASSES[step]) document.body.classList.add(CLASSES[step]);
         });
       })();
 
@@ -3795,7 +3807,6 @@
       };
       let soundOn = true;
       const MSG = {
-        shrug:   () => 'no notes ¯\\_(ツ)_/¯',
         wifi:    () => 'connected — vibes are strong',
         volume:  () => { soundOn = !soundOn; return soundOn ? 'sound: on' : 'sound: off'; },
         clock:   () => `right now: ${nowStr()}`,
