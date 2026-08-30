@@ -84,6 +84,7 @@
 
     html {
       scroll-behavior: smooth;
+      overflow-x: hidden;
     }
 
     body {
@@ -92,6 +93,7 @@
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       background: var(--ux-bg);
+      overflow-x: hidden;
     }
 
     a {
@@ -289,6 +291,12 @@
       padding: 20px 40px 96px;  /* top breathing room now that nav is gone; more bottom gap before content */
       background: var(--ux-bg);
       line-height: 0;
+    }
+    @media (max-width: 639px) {
+      /* The 96px desktop gap is disproportionate against the smaller mobile bar */
+      .finder-bar {
+        padding: 14px 40px 24px;
+      }
     }
     .finder-bar__img {
       display: block;
@@ -722,6 +730,7 @@
       left: 50%;
       transform: translateX(-50%) translateY(4px);
       width: 240px;
+      max-width: calc(100vw - 32px);   /* never wider than the viewport — avoids horizontal overflow */
       background: var(--ux-surface);
       border: 1px solid var(--ux-border);
       border-radius: var(--radius-card);
@@ -743,6 +752,21 @@
       opacity: 1;
       visibility: visible;
       transform: translateX(-50%) translateY(0);
+    }
+
+    /* Below 640px the info icon sits close to the right edge — centering the
+       popover on it would push it off-screen, so anchor from the right instead */
+    @media (max-width: 639px) {
+      .ux-stat__popover {
+        left: auto;
+        right: -8px;
+        transform: translateY(4px);
+      }
+      .ux-stat__info:hover .ux-stat__popover,
+      .ux-stat__info:focus .ux-stat__popover,
+      .ux-stat__info:focus-within .ux-stat__popover {
+        transform: translateY(0);
+      }
     }
 
     .ux-stat__popover-title {
@@ -2307,8 +2331,8 @@
         <button class="fb-spot" data-spot="volume"  style="left:71.5%;width:2.6%"  aria-label="Volume"></button>
         <button class="fb-spot" data-spot="battery" style="left:74.4%;width:2.6%"  aria-label="Battery"></button>
         <button class="fb-spot" data-spot="clock"   style="left:77.3%;width:12.3%" aria-label="Clock"></button>
-        <button class="fb-spot" data-spot="search"  style="left:89.3%;width:2.9%"  aria-label="Search"></button>
-        <a class="fb-spot" href="assets/Jadesola-Sanusi-CV.zip" download style="left:92.3%;width:7.3%" aria-label="Download CV"></a>
+        <button class="fb-spot" data-spot="search"  style="left:89%;width:2.4%"  aria-label="Search"></button>
+        <a class="fb-spot" href="assets/Jadesola-Sanusi-CV.zip" download style="left:91.6%;width:7.9%" aria-label="Download CV"></a>
         <!-- Live clock overlaid on the baked date (patch hides the printed one) -->
         <span class="fb-livedate" id="fb-livedate" role="status" aria-label="Current date and time"></span>
       </div>
