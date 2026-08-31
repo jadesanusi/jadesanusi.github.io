@@ -416,17 +416,28 @@
     }
     .fb-battery-readout.show { opacity: 1; }
 
-    /* Shrug-icon cursor Easter egg — !important + universal selector so the
-       custom cursor sticks everywhere, including over buttons/links that
-       set their own `cursor`, instead of flickering back to the pointer. */
+    /* Shrug-icon cursor Easter egg — the OS/browser cursor is hidden and a
+       JS-tracked image follows the mouse instead. A CSS `cursor:` swap looks
+       simple but every button/link/card sets its own `cursor: pointer`,
+       which kept winning the cascade and made the custom cursor flicker
+       back to the pointer on every element boundary it crossed. */
     body.cursor-shrug,
-    body.cursor-shrug * {
-      cursor: url("assets/cursor-shrug.png") 0 0, auto !important;
-    }
+    body.cursor-shrug *,
     body.cursor-doodle,
     body.cursor-doodle * {
-      cursor: url("assets/cursor-doodle.png") 0 0, auto !important;
+      cursor: none !important;
     }
+    .custom-cursor-img {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 400;
+      pointer-events: none;
+      display: none;
+      transform: translate(-9999px, -9999px);
+      will-change: transform;
+    }
+    .custom-cursor-img.active { display: block; }
 
     /* ── Desktop icons column ── */
     .desktop-icons {
@@ -2407,6 +2418,9 @@
   <!-- Full-page power-down overlay — driven by the battery icon in the Finder bar -->
   <div id="power-overlay" aria-hidden="true"></div>
 
+  <!-- JS-tracked custom cursor — see the shrug-icon cursor Easter egg -->
+  <img id="custom-cursor-img" class="custom-cursor-img" alt="" aria-hidden="true" />
+
   <!-- ============================================================
        NAVIGATION
   ============================================================ -->
@@ -3709,18 +3723,43 @@
       })();
 
       // ── Shrug icon: cycles the page cursor through shrug → doodle → default ──
-      // Uses body classes (not inline style.cursor) so the override reaches
-      // buttons/links that set their own cursor — otherwise the custom cursor
-      // flickers back to the default pointer every time it crosses one.
+      // The OS cursor is hidden (cursor:none) and this image is repositioned
+      // on every mousemove instead — a CSS `cursor:` swap flickers back to
+      // the pointer whenever it crosses an element with its own `cursor`
+      // style (buttons, links, cards…), which is most of this page.
       (function(){
         const btn = document.getElementById('fb-shrug-btn');
-        if (!btn) return;
-        const CLASSES = ['', 'cursor-shrug', 'cursor-doodle'];
+        const cursorImg = document.getElementById('custom-cursor-img');
+        if (!btn || !cursorImg) return;
+        const STATES = [
+          null,
+          { cls: 'cursor-shrug',  src: 'assets/cursor-shrug.png' },
+          { cls: 'cursor-doodle', src: 'assets/cursor-doodle.png' },
+        ];
         let step = 0;
+        let tracking = false;
+
+        function onMove(e) {
+          cursorImg.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+        }
+
         btn.addEventListener('click', () => {
           document.body.classList.remove('cursor-shrug', 'cursor-doodle');
-          step = (step + 1) % CLASSES.length;
-          if (CLASSES[step]) document.body.classList.add(CLASSES[step]);
+          cursorImg.classList.remove('active');
+          step = (step + 1) % STATES.length;
+          const state = STATES[step];
+          if (state) {
+            document.body.classList.add(state.cls);
+            cursorImg.src = state.src;
+            cursorImg.classList.add('active');
+            if (!tracking) {
+              document.addEventListener('mousemove', onMove);
+              tracking = true;
+            }
+          } else if (tracking) {
+            document.removeEventListener('mousemove', onMove);
+            tracking = false;
+          }
         });
       })();
 
