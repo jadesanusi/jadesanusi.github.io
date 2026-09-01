@@ -288,7 +288,7 @@
       right: 0;
       z-index: 100;
       margin: 0;
-      padding: 20px 40px 16px;  /* top breathing room now that nav is gone; gap before content */
+      padding: 20px 40px;  /* symmetric — no extra gap baked into the fixed bar itself; that lives on the scrollable content below instead */
       background: var(--ux-bg);
       line-height: 0;
     }
@@ -674,9 +674,12 @@
     /* UX content clears the fixed Finder bar instead of the plain nav —
        height is measured in JS since the bar's height is fluid (aspect-ratio
        scales with viewport width, and swaps to the mobile art below 640px).
-       Fallback covers the pre-JS/no-JS paint. */
+       The extra 30px is genuine content padding (scrolls away with the page),
+       not baked into the fixed bar itself, so nothing stays stuck on screen
+       under the header once you scroll past it. Fallback covers the
+       pre-JS/no-JS paint. */
     #ux.section {
-      padding-top: var(--finder-bar-h, 160px);
+      padding-top: calc(var(--finder-bar-h, 130px) + 30px);
     }
 
     /* ============================================================
