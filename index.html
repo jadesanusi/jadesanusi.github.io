@@ -3333,6 +3333,8 @@
           <p class="cs-problem-statement__text">${data.problemStatement}</p>
         </div>` : ''}
 
+        ${renderWalkthrough(data)}
+
         <div class="cs-meta-grid">
           ${data.meta.map(m => `
             <div class="cs-meta-item">
@@ -3372,8 +3374,6 @@
           ${data.screensIntro ? `<p>${data.screensIntro}</p>` : ''}
           ${renderGallery(data)}
         </div>
-
-        ${renderWalkthrough(data)}
 
         <div class="cs-section">
           <p class="cs-section-label">What changed</p>
