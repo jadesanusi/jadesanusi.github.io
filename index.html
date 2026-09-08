@@ -3306,15 +3306,15 @@
         </div>
 
         <div class="cs-section">
-          <p class="cs-section-label">The complexity I inherited</p>
-          <p>${data.overview}</p>
-        </div>
-
-        <div class="cs-section">
           <p class="cs-section-label">Why it was difficult</p>
           ${data.problemNoteTop ? `<p class="cs-note">${data.problemNoteTop}</p>` : ''}
           <p>${data.problem}</p>
           ${data.problemNote ? `<p class="cs-note">${data.problemNote}</p>` : ''}
+        </div>
+
+        <div class="cs-section">
+          <p class="cs-section-label">The complexity I inherited</p>
+          <p>${data.overview}</p>
         </div>
 
         ${data.strategy ? `
