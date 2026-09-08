@@ -1280,6 +1280,30 @@
       line-height: 1.5;
     }
 
+    /* Punchy TL;DR callout — separate from the full "Why it was difficult"
+       narrative further down the page; for quick scanning. */
+    .cs-problem-statement {
+      background: var(--ux-ink);
+      color: #ffffff;
+      border-radius: var(--radius-card);
+      padding: 28px 32px;
+      margin-bottom: 48px;
+    }
+    .cs-problem-statement__label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 12px;
+    }
+    .cs-problem-statement__text {
+      font-size: clamp(18px, 2.2vw, 23px);
+      font-weight: 500;
+      line-height: 1.45;
+      letter-spacing: -0.01em;
+    }
+
     .cs-figma-btn {
       display: inline-flex;
       align-items: center;
@@ -2813,6 +2837,7 @@
         label: 'Cash Management Tool · Codename: CashRoll',
         title: 'Cash Management Tool',
         subtitle: 'A transaction data grid replacing manual Excel workflows for cash operations.',
+        problemStatement: 'Cash reconciliation ran on memorised habit across dozens of disconnected spreadsheets — with no audit trail and no way to catch errors before they compounded.',
         figma: 'https://www.figma.com/design/TulzjRqLfMYvzUOeLhRc8Z/Portfolio-UX?node-id=122-615590',
         meta: [
           { label: 'Client',   value: 'A global investment bank' },
@@ -2852,6 +2877,7 @@
         label: 'Portfolio Valuation Platform · Codename: Vela',
         title: 'Portfolio Valuation Platform',
         subtitle: 'A quarterly valuation and marking platform across Private Credit, Real Estate and Private Equity, with structured approvals.',
+        problemStatement: 'A valuation platform already existed, but nobody trusted it enough to use — analysts redid every calculation in Excel and reconciled three disagreeing prices by hand before trusting a single number.',
         figma: 'https://www.figma.com/design/TulzjRqLfMYvzUOeLhRc8Z/Portfolio-UX?node-id=122-615591',
         meta: [
           { label: 'Client',   value: 'A global investment bank' },
@@ -2887,6 +2913,7 @@
         label: 'Deal Terms Capture',
         title: 'Deal Terms Capture',
         subtitle: 'A platform for capturing and managing the commercial terms behind private equity investments.',
+        problemStatement: 'The commercial terms behind every investment were buried inside hundreds of pages of legal documents, understood only by manually re-reading contracts each time something needed to change.',
         figma: 'https://www.figma.com/design/TulzjRqLfMYvzUOeLhRc8Z/Portfolio-UX?node-id=117-615589',
         meta: [
           { label: 'Client',   value: 'A global investment bank' },
@@ -2923,6 +2950,7 @@
         label: 'Insurance Expense Matching Dashboard',
         title: 'Insurance Expense Matching Dashboard',
         subtitle: 'Replacing email chains and manual invoice tracking with a reconciliation dashboard.',
+        problemStatement: 'Insurance reconciliation ran entirely on email — no shared record, no searchability, and no way to track an exception through to resolution.',
         figma: 'https://www.figma.com/design/TulzjRqLfMYvzUOeLhRc8Z/Portfolio-UX?node-id=71-752004',
         meta: [
           { label: 'Client',   value: 'A global investment bank' },
@@ -2954,6 +2982,7 @@
         label: 'Credit Risk Memo & Agreement Setup',
         title: 'Credit Risk Memo & Agreement Setup',
         subtitle: 'Redesigning how deal teams set up securities inside Lithium — cutting an up-to-184-field manual process down to what is actually needed.',
+        problemStatement: 'Setting up a single security meant keying up to 184 fields by hand — 75% of them duplicates of another security in the same deal — with no clear sense of what was required or where it stood.',
         figma: 'https://www.figma.com/design/24ceRWhy229VxAzP5XVdu6/Untitled?node-id=1-51926',
         meta: [
           { label: 'Client',   value: 'A global investment bank' },
@@ -3002,6 +3031,7 @@
         label: 'FX Risk Management Tool',
         title: 'FX Risk Management Tool',
         subtitle: 'FX exposure views across fund families, with pivot presets and hedging ratios.',
+        problemStatement: 'FX exposure across fund families was tracked ad hoc, with no consolidated view for risk managers to work from.',
         figma: 'https://www.figma.com/design/TulzjRqLfMYvzUOeLhRc8Z/Portfolio-UX?node-id=71-474951',
         meta: [
           { label: 'Client',   value: 'A global investment bank' },
@@ -3033,6 +3063,7 @@
         label: 'RedLine · Freelance',
         title: 'RedLine',
         subtitle: 'A mobile-first app for artists and producers to create, collaborate on, and digitally sign music contracts.',
+        problemStatement: 'Independent artists had no accessible way to draft, negotiate or sign music contracts — the process ran through lawyers, email and paper, favouring acts who could afford legal teams.',
         figma: 'https://redline.figma.site',
         figmaLabel: 'View live prototype',
         meta: [
@@ -3295,6 +3326,12 @@
         <p class="cs-label">${data.label}</p>
         <h1 class="cs-title">${data.title}</h1>
         <p class="cs-subtitle">${data.subtitle}</p>
+
+        ${data.problemStatement ? `
+        <div class="cs-problem-statement">
+          <p class="cs-problem-statement__label">Problem statement</p>
+          <p class="cs-problem-statement__text">${data.problemStatement}</p>
+        </div>` : ''}
 
         <div class="cs-meta-grid">
           ${data.meta.map(m => `
