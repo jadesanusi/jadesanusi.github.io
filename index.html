@@ -2571,7 +2571,7 @@
             <div class="project-card__body">
               <p class="project-card__num">01</p>
               <h2 class="project-card__title">Credit Risk Memo &amp; Agreement Setup</h2>
-              <p class="project-card__desc">A revamp of an unusable legacy platform for credit agreement setup, Orion integration, and audit trail.</p>
+              <p class="project-card__desc">A revamp of an unusable legacy platform for credit agreement setup, system integration, and audit trail.</p>
               <div class="project-card__tags">
                 <span class="tag">Enterprise</span>
                 <span class="tag">Revamp</span>
@@ -2981,7 +2981,7 @@
       credit: {
         label: 'Credit Risk Memo & Agreement Setup',
         title: 'Credit Risk Memo & Agreement Setup',
-        subtitle: 'Redesigning how deal teams set up securities inside Lithium — cutting an up-to-184-field manual process down to what is actually needed.',
+        subtitle: 'Redesigning how deal teams set up securities inside the platform — cutting an up-to-184-field manual process down to what is actually needed.',
         problemStatement: 'Setting up a single security meant keying up to 184 fields by hand — 75% of them duplicates of another security in the same deal — with no clear sense of what was required or where it stood.',
         figma: 'https://www.figma.com/design/24ceRWhy229VxAzP5XVdu6/Untitled?node-id=1-51926',
         meta: [
@@ -2989,12 +2989,12 @@
           { label: 'Role',     value: 'Lead UX Designer' },
           { label: 'Status',   value: 'In progress' },
           { label: 'Type',     value: 'Enterprise · Revamp · Private Credit' },
-          { label: 'Before',   value: 'Lithium — up to 184 fields keyed by hand' },
+          { label: 'Before',   value: 'The platform — up to 184 fields keyed by hand' },
           { label: 'Year',     value: '2024–2025' },
         ],
-        overview: `Deal teams across Private Credit set up securities inside Lithium, the platform that holds credit agreements, securities and credit-risk memos. Setting up one security meant filling in up to 184 fields by hand, and an opportunity could hold several. Nobody could tell you mid-flow how many were left, or whether what they'd entered would even pass.</p><p>So it broke in a predictable way. Securities and Credit Risk made up about a quarter of all the support tickets deal teams raised, and roughly 40% of those weren't bugs. They were people not understanding what the product wanted from them. Lithium held the data, but the actual work had drifted outside it.`,
+        overview: `Deal teams across Private Credit set up securities inside the platform that holds credit agreements, securities and credit-risk memos. Setting up one security meant filling in up to 184 fields by hand, and an opportunity could hold several. Nobody could tell you mid-flow how many were left, or whether what they'd entered would even pass.</p><p>So it broke in a predictable way. Securities and Credit Risk made up about a quarter of all the support tickets deal teams raised, and roughly 40% of those weren't bugs. They were people not understanding what the product wanted from them. The platform held the data, but the actual work had drifted outside it.`,
         problemNoteTop: `[ Your words — one line on what filling in 184 fields a security does to someone doing it all day. ]`,
-        problem: `The problem was volume and repetition, not one broken screen. When engineering pulled the data apart they found that 75.3% of the fields on a security were identical to another security in the same opportunity. The same information, typed again and again. Commercial Real Estate and Secured Lending were the worst offenders at around 184 fields each, against a fraction of that for Corporate Loans.</p><p>The field count wasn't the only issue. Required and optional fields looked the same. Error messages were written in system language instead of plain English. Field names and dropdowns went unexplained. And once you submitted, you had no way to see where your work sat in the maker/checker chain or whether a Prime ID had generated downstream. Every setup carried a layer of invisible work: remembering the quirks, checking things by hand, chasing status across teams.`,
+        problem: `The problem was volume and repetition, not one broken screen. When engineering pulled the data apart they found that 75.3% of the fields on a security were identical to another security in the same opportunity. The same information, typed again and again. Commercial Real Estate and Secured Lending were the worst offenders at around 184 fields each, against a fraction of that for Corporate Loans.</p><p>The field count wasn't the only issue. Required and optional fields looked the same. Error messages were written in system language instead of plain English. Field names and dropdowns went unexplained. And once you submitted, you had no way to see where your work sat in the maker/checker chain or whether a downstream reference ID had generated. Every setup carried a layer of invisible work: remembering the quirks, checking things by hand, chasing status across teams.`,
         approach: `I didn't take the legacy screens as the brief. I interviewed 25 deal-team members across three groups (Direct Lending, Real Estate and Urban Investment) and mapped the real securities workflow underneath what they were describing, scoring sentiment before and after so I wasn't working off anecdote.</p><p>That gave me a ranked list of 14 improvement opportunities, prioritised with engineering by impact against effort. The top ones weren't cosmetic. Stop the duplicate data entry across securities. Make required versus optional obvious. Give people status transparency downstream. Rewrite the errors into something human. Separate the fields needed at IC, Commitment and Close so nobody was shown everything at once.</p><p>Two of the fourteen were about AI data extraction: pulling field values straight out of uploaded deal documents, and handling the conflict when a user's input and the AI's disagree on the same field. That's the direction the next phase takes.`,
         screensIntro: `Copy-across, so shared fields populate once per opportunity rather than once per security. That was the single biggest lever, and it came straight off the 75.3% finding. A restructured setup flow that separates what's needed at IC, Commitment and Close, so users see the right fields at the right stage. Inline validation and rewritten error messages that actually say what's wrong. A progress and submission-status layer so people can see how complete they are and where their eTask sits, including collapsing up to three separate maker/checker eTasks (Credit Agreement, Securities, Credit Risk) into one where it applies. And the groundwork for AI-extracted field population in the next phase.`,
         outcome: `The work is still in progress, so the impact here is projected rather than measured.</p><p>The project has streamlined more than the security setup process — it has changed how deal teams spend their time. By removing much of the manual troubleshooting and administrative overhead, the team can spend less time resolving operational issues and more time on the work that drives the business: building client relationships and sourcing deals.</p><p>It has also created a single source of truth for security setup. Instead of relying on offline processes and individual knowledge, new joiners and existing team members can refer to one centralised workflow, making the process easier to understand, trust and manage.`,
@@ -3014,7 +3014,7 @@
         ],
         beforeAfter: {
           beforeTag: '~184 fields', afterTag: '40–50',
-          summary: 'Lithium held the data. The work had drifted outside it.',
+          summary: 'The platform held the data. The work had drifted outside it.',
           intro: `Before, setting up a security meant up to 184 fields keyed by hand, most of them duplicates of a security you'd already done, with no sense of what was required or where your submission went.</p><p>After, securities inherit their shared fields instead of asking twice. Required and optional are clearly split, validation reads like plain English, progress shows live as "X of Y required fields complete," and submission status is visible through the maker/checker flow. Target field counts come down from around 184 to 40–50.`,
           beforeLabel: 'Up to 184 fields, keyed by hand, per security',
           beforeIssues: ['Up to 184 fields per security, by hand', '75.3% duplicated from another security', 'Required vs optional looked identical', 'Errors in system language', 'No status once submitted'],
@@ -3024,7 +3024,7 @@
         },
         gallery: [
           { src: 'images/credit/01-empty-state.png', caption: 'Empty state — clear onboarding into the agreement setup flow.' },
-          { src: 'images/credit/02-sec-view.png', caption: 'Securities view — structured agreement data with Orion integration and full audit trail.' },
+          { src: 'images/credit/02-sec-view.png', caption: 'Securities view — structured agreement data with system integration and full audit trail.' },
         ],
       },
       fx: {
