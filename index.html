@@ -416,14 +416,24 @@
     }
     .fb-battery-readout.show { opacity: 1; }
 
-    /* Shrug-icon cursor Easter egg — plain native cursor swap on <body>.
-       Buttons/links/cards keep their own `cursor: pointer` (not overridden),
-       so hovering interactive elements still shows the normal pointer —
-       that's fine, and it avoids fighting the cascade on every element,
-       which is what caused the flicker in earlier attempts. */
-    body.cursor-shrug {
-      cursor: url("assets/cursor-shrug.png") 0 0, auto;
+    /* Shrug-icon cursor Easter egg — the OS cursor is hidden everywhere
+       (including over elements with their own `cursor: pointer`, like
+       buttons/links/cards) and a JS-tracked image is drawn in its place. */
+    body.cursor-shrug,
+    body.cursor-shrug * {
+      cursor: none !important;
     }
+    .custom-cursor-img {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 400;
+      pointer-events: none;
+      display: none;
+      transform: translate(-9999px, -9999px);
+      will-change: transform;
+    }
+    .custom-cursor-img.active { display: block; }
 
     /* ── Desktop icons column ── */
     .desktop-icons {
@@ -2406,6 +2416,9 @@
   <!-- Full-page power-down overlay — driven by the battery icon in the Finder bar -->
   <div id="power-overlay" aria-hidden="true"></div>
 
+  <!-- JS-tracked custom cursor — see the shrug-icon cursor Easter egg -->
+  <img id="custom-cursor-img" class="custom-cursor-img" alt="" aria-hidden="true" />
+
   <!-- ============================================================
        NAVIGATION
   ============================================================ -->
@@ -3721,11 +3734,35 @@
       })();
 
       // ── Shrug icon: toggles the page cursor between shrug and default ──
+      // The OS cursor is hidden (cursor:none) and this image follows the
+      // mouse instead — a plain CSS `cursor:` swap on <body> gets overridden
+      // by every element with its own `cursor` (buttons, links, project
+      // cards…), so it kept reverting to the pointer on hover. Drawing our
+      // own cursor sidesteps that entirely.
       (function(){
         const btn = document.getElementById('fb-shrug-btn');
-        if (!btn) return;
+        const cursorImg = document.getElementById('custom-cursor-img');
+        if (!btn || !cursorImg) return;
+        let tracking = false;
+
+        function onMove(e) {
+          cursorImg.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+        }
+
         btn.addEventListener('click', () => {
-          document.body.classList.toggle('cursor-shrug');
+          const active = document.body.classList.toggle('cursor-shrug');
+          if (active) {
+            cursorImg.src = 'assets/cursor-shrug.png';
+            cursorImg.classList.add('active');
+            if (!tracking) {
+              document.addEventListener('mousemove', onMove);
+              tracking = true;
+            }
+          } else {
+            cursorImg.classList.remove('active');
+            document.removeEventListener('mousemove', onMove);
+            tracking = false;
+          }
         });
       })();
 
