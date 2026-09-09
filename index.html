@@ -1376,33 +1376,7 @@
       color: var(--ux-ink);
       margin-bottom: 12px;
     }
-    .cs-impact-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .cs-impact-list li {
-      font-size: 15px;
-      line-height: 1.5;
-      color: #3a3a3a;
-      padding-left: 18px;
-      position: relative;
-    }
-    .cs-impact-list li::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 8px;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--ux-ink);
-    }
-
-    /* Evidence strip — scannable proof chips */
+    /* Evidence strip — scannable proof chips (shared by Evidence and Projected impact) */
     .cs-evidence {
       list-style: none;
       display: flex;
@@ -3333,6 +3307,12 @@
           <p class="cs-problem-statement__text">${data.problemStatement}</p>
         </div>` : ''}
 
+        ${data.evidence && data.evidence.length ? `
+        <div class="cs-section">
+          <p class="cs-section-label">Evidence</p>
+          <ul class="cs-evidence">${data.evidence.map(e => `<li class="cs-evidence__item">${e}</li>`).join('')}</ul>
+        </div>` : ''}
+
         ${renderWalkthrough(data)}
 
         <div class="cs-meta-grid">
@@ -3382,15 +3362,9 @@
           ${data.impact && data.impact.length ? `
           <div class="cs-impact">
             <p class="cs-impact-label">${data.impactLabel || 'Projected impact'}</p>
-            <ul class="cs-impact-list">${data.impact.map(i => `<li>${i}</li>`).join('')}</ul>
+            <ul class="cs-evidence">${data.impact.map(i => `<li class="cs-evidence__item">${i}</li>`).join('')}</ul>
           </div>` : ''}
         </div>
-
-        ${data.evidence && data.evidence.length ? `
-        <div class="cs-section">
-          <p class="cs-section-label">Evidence</p>
-          <ul class="cs-evidence">${data.evidence.map(e => `<li class="cs-evidence__item">${e}</li>`).join('')}</ul>
-        </div>` : ''}
       `;
 
       const overlay = document.getElementById('case-study-overlay');
