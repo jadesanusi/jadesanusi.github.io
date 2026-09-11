@@ -1265,6 +1265,89 @@
       padding: 64px 40px 120px;
     }
 
+    /* ============================================================
+       CASE STUDY V2 — experimental split-screen layout (CashRoll only)
+       Opted into per case study via `data.layout === 'v2'`. Reuses every
+       existing .cs-* class for the reading column; only adds a sticky
+       visual rail alongside it. #case-study-content.cs-v2-active drops
+       the v1 760px reading-column cap so this layout can go full width.
+    ============================================================ */
+    #case-study-content.cs-v2-active {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .cs-v2-layout {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .cs-v2-visual {
+      position: sticky;
+      top: 56px;                         /* sits right below .case-study-nav */
+      width: 40%;
+      height: calc(100vh - 56px);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      background: var(--ux-bg);
+      border-right: 1px solid var(--ux-border);
+    }
+
+    .cs-v2-visual__frame {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .cs-v2-visual__img {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      opacity: 0;
+      transition: opacity 320ms ease;
+    }
+
+    .cs-v2-visual__img.is-active {
+      opacity: 1;
+    }
+
+    .cs-v2-visual__caption {
+      padding: 16px 32px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--ux-muted);
+      border-top: 1px solid var(--ux-border);
+      min-height: 1.4em;
+    }
+
+    .cs-v2-content {
+      width: 60%;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 64px 48px 140px;
+    }
+
+    /* Below this width the split-screen concept is dropped entirely —
+       single column, canvas hidden, images live inline in their own
+       sections (the Before/After component and gallery already do this
+       on their own, unaffected by this layout). */
+    @media (max-width: 900px) {
+      .cs-v2-visual {
+        display: none;
+      }
+      .cs-v2-content {
+        width: 100%;
+        max-width: 640px;
+        padding: 40px 24px 100px;
+      }
+    }
+
     .cs-label {
       font-size: 11px;
       font-weight: 500;
@@ -2822,6 +2905,7 @@
 
     const CASE_STUDIES = {
       cashroll: {
+        layout: 'v2',   // experimental split-screen prototype — CashRoll only, see renderCaseStudyV2()
         label: 'Cash Management Tool · Codename: CashRoll',
         title: 'Cash Management Tool',
         subtitle: 'A transaction data grid replacing manual Excel workflows for cash operations.',
@@ -3305,12 +3389,176 @@
     }
 
     // ——— Case study overlay —————————————————————————————————————
+    // ——— Case study V2 — experimental split-screen layout (CashRoll only) ———
+    // Opted into via `data.layout === 'v2'` on a single CASE_STUDIES entry.
+    // Reuses the existing renderBeforeAfter()/renderGallery()/renderWalkthrough()
+    // output verbatim, and every text section is the exact same markup/copy
+    // as the v1 template below — just wrapped in a `.cs-v2-track` so an
+    // IntersectionObserver can tell which section is centred in the reading
+    // column, and cross-fade the sticky visual to match. Sections with no
+    // obvious corresponding screenshot (walkthrough, meta, problem, overview,
+    // approach) are simply absent from `visuals` below, so the canvas is left
+    // untouched while they're being read, per spec — no imagery is invented.
+    let cashRollV2Observer = null;
+
+    function renderCaseStudyV2(data, content) {
+      const visuals = {
+        intro:       { src: data.gallery[0].src, caption: data.gallery[0].caption },
+        beforeafter: { src: data.beforeAfter.afterSrc, caption: data.beforeAfter.afterLabel },
+        outcome:     { src: data.gallery[0].src, caption: data.gallery[0].caption },
+      };
+      data.gallery.forEach((g, i) => { visuals['gallery-' + i] = { src: g.src, caption: g.caption }; });
+      const uniqueSrcs = [...new Set(Object.values(visuals).map(v => v.src))];
+
+      content.innerHTML = `
+        <div class="cs-v2-layout">
+          <div class="cs-v2-visual">
+            <div class="cs-v2-visual__frame">
+              ${uniqueSrcs.map(src => `<img class="cs-v2-visual__img" data-src="${src}" src="${src}" loading="lazy" alt="" />`).join('')}
+            </div>
+            <p class="cs-v2-visual__caption" id="cs-v2-caption"></p>
+          </div>
+          <div class="cs-v2-content">
+
+            <div class="cs-v2-track" data-visual="intro">
+              <p class="cs-label">${data.label}</p>
+              <h1 class="cs-title">${data.title}</h1>
+              <p class="cs-subtitle">${data.subtitle}</p>
+              ${data.problemStatement ? `
+              <div class="cs-problem-statement">
+                <p class="cs-problem-statement__label">Problem statement</p>
+                <p class="cs-problem-statement__text">${data.problemStatement}</p>
+              </div>` : ''}
+              ${data.evidence && data.evidence.length ? `
+              <div class="cs-section">
+                <p class="cs-section-label">Evidence</p>
+                <ul class="cs-evidence">${data.evidence.map(e => `<li class="cs-evidence__item">${e}</li>`).join('')}</ul>
+              </div>` : ''}
+            </div>
+
+            <div class="cs-v2-track" data-visual="walkthrough">
+              ${renderWalkthrough(data)}
+            </div>
+
+            <div class="cs-v2-track" data-visual="meta">
+              <div class="cs-meta-grid">
+                ${data.meta.map(m => `
+                  <div class="cs-meta-item">
+                    <p class="cs-meta-item__label">${m.label}</p>
+                    <p class="cs-meta-item__value">${m.value}</p>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="cs-v2-track" data-visual="problem">
+              <div class="cs-section">
+                <p class="cs-section-label">Why it was difficult</p>
+                ${data.problemNoteTop ? `<p class="cs-note">${data.problemNoteTop}</p>` : ''}
+                <p>${data.problem}</p>
+                ${data.problemNote ? `<p class="cs-note">${data.problemNote}</p>` : ''}
+              </div>
+            </div>
+
+            <div class="cs-v2-track" data-visual="overview">
+              <div class="cs-section">
+                <p class="cs-section-label">The complexity I inherited</p>
+                <p>${data.overview}</p>
+              </div>
+            </div>
+
+            ${data.strategy ? `
+            <div class="cs-v2-track" data-visual="strategy">
+              <div class="cs-section">
+                <p class="cs-section-label">${data.strategyLabel || 'A strategy decision before a design decision'}</p>
+                <p>${data.strategy}</p>
+              </div>
+            </div>` : ''}
+
+            <div class="cs-v2-track" data-visual="approach">
+              <div class="cs-section">
+                <p class="cs-section-label">How I made sense of it</p>
+                <p>${data.approach}</p>
+              </div>
+            </div>
+
+            <div class="cs-v2-track" data-visual="beforeafter">
+              ${renderBeforeAfter(data)}
+            </div>
+
+            <div class="cs-v2-track cs-v2-gallery-anchor" data-visual="gallery-0">
+              <div class="cs-section">
+                <p class="cs-section-label">The system I built</p>
+                ${data.screensIntro ? `<p>${data.screensIntro}</p>` : ''}
+                ${renderGallery(data)}
+              </div>
+            </div>
+
+            <div class="cs-v2-track" data-visual="outcome">
+              <div class="cs-section">
+                <p class="cs-section-label">What changed</p>
+                <p>${data.outcome}</p>
+                ${data.outcomeNote ? `<p class="cs-note">${data.outcomeNote}</p>` : ''}
+                ${data.impact && data.impact.length ? `
+                <div class="cs-impact">
+                  <p class="cs-impact-label">${data.impactLabel || 'Projected impact'}</p>
+                  <ul class="cs-evidence">${data.impact.map(i => `<li class="cs-evidence__item">${i}</li>`).join('')}</ul>
+                </div>` : ''}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+
+      // Tag each individual gallery figure (from the untouched renderGallery()
+      // output) so the canvas tracks per-screenshot, not just the section as
+      // a whole — the wrapping anchor above only existed to host that markup.
+      const galleryAnchor = content.querySelector('.cs-v2-gallery-anchor');
+      if (galleryAnchor) {
+        galleryAnchor.classList.remove('cs-v2-track');
+        galleryAnchor.removeAttribute('data-visual');
+        galleryAnchor.querySelectorAll('.cs-fig').forEach((fig, i) => {
+          fig.classList.add('cs-v2-track');
+          fig.dataset.visual = 'gallery-' + i;
+        });
+      }
+
+      if (cashRollV2Observer) cashRollV2Observer.disconnect();
+
+      const overlayEl = document.getElementById('case-study-overlay');
+      const imgEls = content.querySelectorAll('.cs-v2-visual__img');
+      const captionEl = content.querySelector('#cs-v2-caption');
+
+      function setVisual(key) {
+        const v = visuals[key];
+        if (!v) return;   // no mapping for this section — leave the canvas as it is
+        imgEls.forEach(img => img.classList.toggle('is-active', img.dataset.src === v.src));
+        if (captionEl) captionEl.textContent = v.caption || '';
+      }
+
+      setVisual('intro');
+
+      cashRollV2Observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) setVisual(entry.target.dataset.visual);
+        });
+      }, { root: overlayEl, rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+
+      content.querySelectorAll('.cs-v2-track[data-visual]').forEach(t => cashRollV2Observer.observe(t));
+    }
+
     function openCaseStudy(id) {
       const data = CASE_STUDIES[id];
       if (!data) return;
 
       const content = document.getElementById('case-study-content');
-      content.innerHTML = `
+      content.classList.toggle('cs-v2-active', data.layout === 'v2');
+
+      if (data.layout === 'v2') {
+        renderCaseStudyV2(data, content);
+      } else {
+        content.innerHTML = `
         <p class="cs-label">${data.label}</p>
         <h1 class="cs-title">${data.title}</h1>
         <p class="cs-subtitle">${data.subtitle}</p>
@@ -3380,6 +3628,7 @@
           </div>` : ''}
         </div>
       `;
+      }
 
       const overlay = document.getElementById('case-study-overlay');
       overlay.classList.add('open');
@@ -3397,6 +3646,7 @@
     function closeCaseStudy() {
       const overlay = document.getElementById('case-study-overlay');
       overlay.classList.remove('visible');
+      if (cashRollV2Observer) { cashRollV2Observer.disconnect(); cashRollV2Observer = null; }
       setTimeout(() => {
         overlay.classList.remove('open');
         document.body.style.overflow = '';
